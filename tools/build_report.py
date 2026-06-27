@@ -433,33 +433,20 @@ def abstract_page():
 # TABLE OF CONTENTS  (static, page numbers approximate)
 # ======================================================================
 TOC_ENTRIES = [
-    ("", "Cover Page", "i"),
-    ("", "Certificate", "ii"),
-    ("", "Internship Completion Certificate", "iii"),
-    ("", "Acknowledgement", "iv"),
-    ("", "Abstract", "v"),
-    ("", "Table of Contents", "vi"),
-    ("1", "Introduction", "1"),
-    ("2", "About Hindustan Aeronautics Limited (HAL)", "4"),
-    ("3", "Rotary Wing Research & Design Centre (RWR&DC)", "8"),
-    ("4", "Flight Testing Centre", "11"),
-    ("5", "Internship Activities", "15"),
-    ("6", "System Requirements", "18"),
-    ("7", "Technologies Used", "20"),
-    ("8", "Project Overview", "24"),
-    ("9", "System Architecture and Design Diagrams", "27"),
-    ("10", "System Modules", "31"),
-    ("11", "Database Design", "35"),
-    ("12", "Project Screenshots", "37"),
-    ("13", "Source Code Explanation", "42"),
-    ("14", "Testing", "47"),
-    ("15", "Advantages", "49"),
-    ("16", "Learning Outcomes", "51"),
-    ("17", "Challenges", "53"),
-    ("18", "Future Scope", "55"),
-    ("19", "Conclusion", "57"),
-    ("20", "Bibliography", "59"),
-    ("", "Appendix", "60"),
+    ("1",  "Introduction of the Company", "1"),
+    ("2",  "Overview of Internship Activities", "2-4"),
+    ("3",  "System Requirements", "5-6"),
+    ("4",  "Tools Covered", "7-10"),
+    ("5",  "Technologies Used", "11-19"),
+    ("6",  "Learning Methods", "20-25"),
+    ("7",  "Development Pages During Internship", "26-28"),
+    ("8",  "Source Code", "29-32"),
+    ("9",  "Database", "33"),
+    ("10", "Benefits of Internship", "34"),
+    ("11", "Job Opportunities", "35"),
+    ("12", "Objectives", "36-37"),
+    ("13", "Conclusion", "38-39"),
+    ("14", "Bibliography", "40-41"),
 ]
 
 def _index_cell(text, w, align="center", bold=False, size=13, header=False):
@@ -515,9 +502,8 @@ def toc_page():
     # Centred bold "INDEX" title
     add(para(run("INDEX", bold=True, size=20, font="Times New Roman"),
              align="center", spacing_before=120, spacing_after=240, line=360, keep=True))
-    # Only the numbered chapters and appendix are listed, matching the sample style.
-    rows = [(num, title, pg) for (num, title, pg) in TOC_ENTRIES if num] \
-           + [("", "Appendix", "60")]
+    # List all 14 chapters exactly as in the INDEX.
+    rows = list(TOC_ENTRIES)
     index_table(rows, widths=[1500, 6360, 1500])
 
 print("Front matter loaded.")
@@ -1942,6 +1928,652 @@ def document_rels_xml():
         '</Relationships>')
 
 # ======================================================================
+# 14-CHAPTER STRUCTURE (matching the INDEX)
+# ======================================================================
+def n1_company():
+    h1("CHAPTER 1   INTRODUCTION OF THE COMPANY")
+    h2("1.1  Introduction")
+    p("This chapter introduces the organisation at which the industrial internship was carried "
+      "out, namely Hindustan Aeronautics Limited, and in particular its Rotary Wing Research & "
+      "Design Centre and Flight Testing Centre, where the internship was based. It establishes the "
+      "context in which the internship and the associated project were undertaken.", indent=False)
+    h2("1.2  About Hindustan Aeronautics Limited (HAL)")
+    p("Hindustan Aeronautics Limited, popularly known as HAL, is one of the largest and oldest "
+      "aerospace and defence organisations in Asia. It is a public-sector undertaking of the "
+      "Government of India operating under the Ministry of Defence, and it is engaged in the "
+      "design, development, manufacture, repair, overhaul and upgrade of aircraft, helicopters, "
+      "aero-engines, avionics and a wide range of systems for military and civil use. Over the "
+      "decades HAL has been central to building the nation's self-reliance in aerospace technology, "
+      "serving the Indian Air Force, Army, Navy and Coast Guard as well as several civil operators.")
+    p("HAL is organised into a number of complexes and divisions located across the country, "
+      "including dedicated design and research centres, manufacturing divisions and overhaul "
+      "facilities. Among its well-known products are the Tejas Light Combat Aircraft, the Advanced "
+      "Light Helicopter Dhruv, the Light Combat Helicopter Prachand and the HTT-40 trainer.")
+    h2("1.3  Rotary Wing Research & Design Centre (RWR&DC)")
+    p("The Rotary Wing Research & Design Centre is the dedicated design house of HAL responsible "
+      "for the research, design and development of helicopters and other rotary-wing aircraft. It "
+      "brings together specialists in aerodynamics, structures, dynamics, systems, avionics and "
+      "flight testing to create indigenous rotorcraft for defence and civil applications. The "
+      "centre handles the complete design cycle, from configuration studies and detailed design "
+      "through analysis and prototype manufacture to ground and flight testing.")
+    h2("1.4  Flight Testing Centre")
+    p("The Flight Testing Centre is the facility within the design organisation where prototype and "
+      "production aircraft are subjected to systematic flight evaluation. It is the place where "
+      "design predictions meet physical reality and where the airworthiness and performance of an "
+      "aircraft are ultimately proven. The internship was based in this centre, with a focus on the "
+      "processing of flight test data, an activity that lies at the heart of validating the "
+      "performance and safety of every aircraft developed by HAL.")
+    h2("1.5  Internship Domain")
+    p("The internship was undertaken on the theme of data processing at the Flight Testing Centre. "
+      "Flight testing generates very large volumes of telemetry and instrumentation data that must "
+      "be acquired, processed, analysed and visualised before any engineering conclusion can be "
+      "drawn. Understanding this activity, and building a software tool that demonstrates its "
+      "real-time monitoring and visualisation, formed the core of the internship.")
+
+def n2_activities():
+    h1("CHAPTER 2   OVERVIEW OF INTERNSHIP ACTIVITIES")
+    h2("2.1  Introduction")
+    p("This chapter provides an overview of the activities carried out during the internship. The "
+      "internship was structured so that an initial period of observation and learning was followed "
+      "by the progressive design and development of a software project. Collectively the activities "
+      "constitute a complete, miniature software-engineering cycle conducted within the context of "
+      "a flight testing centre.", indent=False)
+    tabcap("Internship schedule (representative)")
+    table([
+        ["Phase", "Activity", "Outcome"],
+        ["Week 1", "Orientation and observation", "Understanding of the centre and safety culture"],
+        ["Week 2", "Study of flight testing and data processing", "Domain knowledge"],
+        ["Week 3", "Requirement analysis and planning", "Project scope and requirements"],
+        ["Week 4", "User-interface design", "Dashboard and screen layouts"],
+        ["Week 5-6", "Coding and implementation", "Working tracking system"],
+        ["Week 7", "Testing and refinement", "Validated, stable system"],
+        ["Week 8", "Documentation and reporting", "Internship report"],
+    ], widths=[1500, 4200, 3660])
+    h2("2.2  Observation")
+    p("The internship began with a period of observation, during which the working of the flight "
+      "testing centre and the broader design organisation was studied. This included understanding "
+      "the layout of the facility, the flow of activities around a test flight, the safety culture "
+      "and the manner in which different engineering disciplines coordinate. This observation phase "
+      "provided the context necessary to appreciate the significance of data processing.")
+    h2("2.3  Study and Learning of the Domain")
+    p("A substantial part of the early internship was devoted to learning the fundamentals of "
+      "flight test instrumentation, telemetry and data processing. Reference material was studied "
+      "and the concepts were discussed with the mentor, establishing the technical foundation on "
+      "which the project was later built.")
+    h2("2.4  Requirement Analysis")
+    p("Requirement analysis involved identifying precisely what the demonstration software should "
+      "achieve. It was decided that the system should simulate multiple aircraft, process their "
+      "key flight parameters in real time, raise alerts when parameters cross defined thresholds, "
+      "and present the information through a clear, professional interface. The functional and "
+      "non-functional requirements were documented and agreed with the mentor before design began.")
+    h2("2.5  User-Interface Design")
+    p("The user interface was designed with the operational context of a flight testing centre in "
+      "mind. A dark, high-contrast theme was chosen to resemble professional monitoring consoles "
+      "and to reduce eye strain during prolonged use. The screens were organised around a "
+      "navigation menu giving access to the dashboard, live tracking, radar scope, analytics, "
+      "mission control, alerts and an administration panel.")
+    h2("2.6  Implementation")
+    p("The system was implemented using HTML5, CSS3 and JavaScript, with the HTML Canvas API used "
+      "for graphical visualisation. The implementation proceeded module by module, beginning with "
+      "the data model and simulation engine, followed by the dashboard, the map and radar "
+      "visualisations, the analytics module and the remaining screens.")
+    h2("2.7  Testing and Documentation")
+    p("Each module was tested as it was developed, and the integrated system was tested as a whole. "
+      "Throughout the internship, the design decisions, the structure of the code and the results "
+      "obtained were documented, and this documentation forms the basis of the present report.")
+
+def n3_requirements():
+    h1("CHAPTER 3   SYSTEM REQUIREMENTS")
+    h2("3.1  Introduction")
+    p("This chapter specifies the hardware and software requirements for the development and "
+      "operation of the project. Because the system is a browser-based application built entirely "
+      "with client-side web technologies, its requirements are modest, which is one of its "
+      "practical advantages.", indent=False)
+    h2("3.2  Hardware Requirements")
+    tabcap("Hardware requirements")
+    table([
+        ["Component", "Minimum", "Recommended"],
+        ["Processor", "Dual-core 2.0 GHz", "Quad-core 2.5 GHz or higher"],
+        ["Memory (RAM)", "4 GB", "8 GB or higher"],
+        ["Storage", "200 MB free space", "1 GB free space"],
+        ["Display", "1366 x 768", "1920 x 1080 (Full HD)"],
+        ["Graphics", "Integrated graphics", "Integrated or discrete graphics"],
+    ], widths=[2600, 3380, 3380])
+    h2("3.3  Software Requirements")
+    tabcap("Software requirements")
+    table([
+        ["Item", "Requirement"],
+        ["Operating System", "Windows 10/11, Linux or macOS"],
+        ["Web Browser", "Google Chrome, Microsoft Edge, Mozilla Firefox (latest versions)"],
+        ["Code Editor", "Visual Studio Code or any modern text editor"],
+        ["Runtime", "Not required \u2014 runs entirely in the browser"],
+        ["Web Server (optional)", "Any static file server for hosting"],
+    ], widths=[3000, 6360])
+    h2("3.4  Browser and Operating-System Requirements")
+    p("The application requires a modern web browser with support for HTML5, CSS3, the Canvas API "
+      "and contemporary JavaScript. All mainstream browsers released in recent years meet these "
+      "requirements, and no plug-ins or extensions are needed. Because the application is "
+      "platform-independent and runs inside the browser, it operates identically on Windows, Linux "
+      "and macOS, which is an important practical benefit.")
+    h2("3.5  Development Environment")
+    p("The system was developed using a lightweight development environment consisting of a modern "
+      "code editor and a web browser with developer tools. No compilation step or complex build "
+      "pipeline was required, which allowed rapid iteration during development.")
+
+def n4_tools():
+    h1("CHAPTER 4   TOOLS COVERED")
+    h2("4.1  Introduction")
+    p("This chapter describes the software tools that were used and learned during the internship "
+      "for the development of the project. The choice of tools reflected the goal of building a "
+      "portable, lightweight web application without unnecessary complexity.", indent=False)
+    h2("4.2  Visual Studio Code")
+    p("Visual Studio Code was the primary code editor used throughout the internship. It is a free, "
+      "lightweight yet powerful editor that supports HTML, CSS and JavaScript with features such as "
+      "syntax highlighting, intelligent code completion, integrated search and an integrated "
+      "terminal. Its extensibility and convenience made it well suited to the rapid development of "
+      "the application, and learning to use it effectively was itself a valuable skill.")
+    h2("4.3  Web Browser and Developer Tools")
+    p("A modern web browser served not only as the platform on which the application runs but also "
+      "as an essential development tool. The browser's built-in developer tools were used "
+      "extensively to inspect the structure of the page, to examine and adjust styles, to debug "
+      "JavaScript using the console and breakpoints, and to test the responsive behaviour of the "
+      "interface at different screen sizes. Mastery of these tools greatly accelerated development "
+      "and debugging.")
+    h2("4.4  Version Control with Git")
+    p("Git, together with a hosted repository, was used to manage the source code. Version control "
+      "allows changes to be tracked over time, provides a safe history that can be reverted if "
+      "necessary, and is an industry-standard practice. Learning the basic Git workflow of staging, "
+      "committing and pushing changes was an important professional skill acquired during the "
+      "internship.")
+    h2("4.5  The HTML Canvas as a Drawing Tool")
+    p("The HTML Canvas, although a feature of the web platform rather than a separate application, "
+      "functioned as the principal graphical tool of the project. It provides a programmable "
+      "drawing surface on which the live map, the radar scope and the analytics charts are "
+      "rendered. Learning to use the Canvas drawing context \u2014 to draw shapes, lines, text and "
+      "to perform transformations such as translation and rotation \u2014 was central to the work.")
+    h2("4.6  Design and Planning Tools")
+    p("Simple design and planning tools were used to sketch the layout of the screens and to plan "
+      "the structure of the application before coding began. These included basic diagramming for "
+      "the architecture and flow of the system and rough wireframes for the interface, which helped "
+      "to clarify the design and to communicate it to the mentor.")
+    h2("4.7  The Project Deliverables")
+    p("The internship produced two principal deliverables, both of which are self-contained web "
+      "applications that can be opened directly in a browser.")
+    tabcap("Project deliverables")
+    table([
+        ["File", "Description"],
+        ["hal-live-tracking-prototype.html", "The initial single-screen tracking prototype"],
+        ["hal-advanced-tracking-system.html", "The complete Advanced Live Aircraft Tracking System"],
+    ], widths=[4200, 5160])
+    p("The prototype was developed first to establish the core idea of sampling telemetry, "
+      "processing it and visualising it on a Canvas map. It was then expanded into the advanced "
+      "system, which adds authentication, a full dashboard, a radar scope, analytics, mission "
+      "control, an alert feed and an administration panel.")
+
+def n5_technologies():
+    h1("CHAPTER 5   TECHNOLOGIES USED")
+    h2("5.1  Introduction")
+    p("This chapter describes in detail the technologies used to build the project. The system was "
+      "deliberately built using standard, open web technologies so that it is portable, lightweight "
+      "and easy to maintain. Each technology is discussed together with the role it plays in the "
+      "application.", indent=False)
+    h2("5.2  HTML5")
+    p("HyperText Markup Language version 5, or HTML5, is the standard markup language used to "
+      "structure the content of web pages. It provides a rich set of semantic elements, native "
+      "multimedia support and, most importantly for this project, the Canvas element used for "
+      "graphical drawing. HTML5 also introduced features such as local storage, form enhancements "
+      "and improved support for building application-like interfaces in the browser.")
+    p("In the system, HTML5 defines the structure of every screen. It declares the login form, the "
+      "top navigation bar, the side menu, the dashboard cards, the data tables and the containers "
+      "that host the canvas visualisations. The markup is organised into clearly named sections, "
+      "one for each module, so that the structure of the document mirrors the structure of the "
+      "application. This disciplined use of HTML5 makes the interface both accessible and easy to "
+      "maintain.")
+    h2("5.3  CSS3")
+    p("Cascading Style Sheets version 3, or CSS3, is the language used to control the visual "
+      "presentation of web pages. It separates the appearance of a document from its structure, "
+      "which is a fundamental principle of good web design. CSS3 introduced powerful layout "
+      "mechanisms and visual effects that were used extensively in this project.")
+    p("The professional dark theme of the interface is achieved with CSS3. A palette of colour "
+      "variables defines the accent, background and status colours used consistently across the "
+      "application. Flexible-box and grid layouts arrange the dashboard cards, the navigation menu "
+      "and the data tables, while gradients, rounded corners, shadows and smooth transitions give "
+      "the interface a polished appearance. Media queries adapt the layout so that it remains "
+      "usable on smaller screens, demonstrating responsive design in practice.")
+    h2("5.4  JavaScript")
+    p("JavaScript is the programming language of the web and provides the interactivity and logic "
+      "of the application. It is an interpreted, event-driven language that runs directly in the "
+      "browser, and it is capable of manipulating the document, responding to user actions, "
+      "performing calculations and drawing graphics.")
+    p("In this project, JavaScript implements the entire behaviour of the system. It defines the "
+      "aircraft data model as an array of objects; it runs the simulation engine that advances each "
+      "aircraft on every cycle; it processes the telemetry parameters and derives the status of "
+      "each aircraft; it generates alerts when thresholds are crossed; it renders the canvas "
+      "visualisations; and it handles every user interaction. The logic is organised into modular "
+      "functions with clear responsibilities, which makes the code readable and maintainable.")
+    p("The project makes extensive use of core JavaScript features. Objects represent aircraft, "
+      "alerts and sorties; arrays hold collections of these objects; and higher-order array "
+      "methods such as forEach, filter, map and reduce process the data concisely. Timers drive the "
+      "real-time behaviour, and event listeners connect the interface to the logic.")
+    h2("5.5  The HTML Canvas API")
+    p("The Canvas API is the feature of HTML5 that provides a drawing surface on which graphics can "
+      "be rendered programmatically using JavaScript. It is the technology that makes the live map "
+      "and the radar scope possible. The Canvas exposes a two-dimensional drawing context with "
+      "methods for drawing paths, shapes, lines and text, for setting colours and styles, and for "
+      "applying transformations such as translation, rotation and scaling.")
+    p("Using the Canvas API, the application draws the gridded airspace, the oriented and "
+      "colour-coded aircraft symbols, the range rings and cross hairs of the radar, the rotating "
+      "radar sweep and the analytics charts. The canvas is cleared and redrawn many times per "
+      "second, and because each frame reflects the latest state of the data, the result is smooth, "
+      "real-time animation. Working with the Canvas required an understanding of coordinate "
+      "systems, transformations and efficient redrawing, all of which were learned during the "
+      "internship.")
+    h2("5.6  The Document Object Model and Event Handling")
+    p("The Document Object Model, or DOM, is the programming interface through which JavaScript "
+      "interacts with the structure of a web page. The application reads and updates the DOM to "
+      "display processed information, to switch between modules and to reflect changes in the data. "
+      "User interactions are handled through event listeners attached to the navigation menu, the "
+      "search and filter controls and the buttons of the administration panel, demonstrating the "
+      "event-driven nature of web programming.")
+    h2("5.7  Local Storage and Client-side Data")
+    p("The application maintains its data within the browser using in-memory JavaScript structures, "
+      "and the browser's local-storage mechanism can be used to persist configuration between "
+      "sessions. This client-side approach keeps the system self-contained and avoids the need for "
+      "a server during demonstration, while still illustrating the data-handling concepts involved.")
+    h2("5.8  Responsive Design")
+    p("Responsive design is the practice of building interfaces that adapt gracefully to different "
+      "screen sizes and devices. The system uses responsive layout techniques so that it remains "
+      "usable on large monitors as well as on smaller screens. The layout reflows automatically "
+      "and the canvas visualisations resize to fit the available space, ensuring a consistent "
+      "experience across devices.")
+    h2("5.9  Real-time Dashboard Concepts")
+    p("A real-time dashboard continuously presents the most current state of a system through "
+      "concise indicators and visualisations. The project applies these concepts by updating key "
+      "performance indicators, the live map, the data tables and the alert feed at regular "
+      "intervals, giving the user an immediate, at-a-glance understanding of the situation. This is "
+      "precisely the kind of situational awareness required at a flight testing centre.")
+    h2("5.10  Summary of Technologies")
+    tabcap("Summary of technologies and their roles")
+    table([
+        ["Technology", "Role in the Project"],
+        ["HTML5", "Structure and content of all screens; Canvas element"],
+        ["CSS3", "Visual styling, theming and responsive layout"],
+        ["JavaScript", "Application logic, simulation and data processing"],
+        ["Canvas API", "Live map, radar scope and analytics charts"],
+        ["DOM / Events", "Interactivity and dynamic updates"],
+        ["Local Storage", "Optional persistence of configuration"],
+    ], widths=[2600, 6760])
+
+def n6_learning():
+    h1("CHAPTER 6   LEARNING METHODS")
+    h2("6.1  Introduction")
+    p("This chapter describes the methods through which learning took place during the internship. "
+      "Learning in an industrial environment differs markedly from learning in a classroom, and a "
+      "variety of complementary methods contributed to the knowledge and skills acquired.",
+      indent=False)
+    h2("6.2  Learning through Observation")
+    p("A great deal was learned simply by observing the working of the flight testing centre and "
+      "the professionals within it. Observing how engineers planned their work, how they handled "
+      "data, how they communicated and how seriously they treated safety conveyed lessons that "
+      "could not be obtained from books. This method of learning by watching experienced "
+      "practitioners is one of the most valuable aspects of an internship.")
+    h2("6.3  Learning through Mentorship")
+    p("Guidance from the project mentor was a central method of learning. Regular discussions with "
+      "the mentor clarified concepts, corrected misunderstandings and provided direction. The "
+      "mentor posed questions that encouraged deeper thinking and offered feedback that steadily "
+      "improved the quality of the work. This one-to-one mentorship accelerated learning far beyond "
+      "what independent study alone could achieve.")
+    h2("6.4  Self-study and Reference Material")
+    p("Independent study formed the foundation on which the practical work was built. Technical "
+      "documentation, reference books and reputable online resources were consulted to understand "
+      "flight testing, data processing and the web technologies used in the project. The ability "
+      "to find, evaluate and absorb information independently is an essential professional skill "
+      "that was strengthened throughout the internship.")
+    h2("6.5  Learning by Doing")
+    p("The most effective learning came from building the project itself. Designing the data model, "
+      "writing the processing logic and drawing the visualisations turned abstract knowledge into "
+      "concrete skill. Each feature implemented deepened the understanding of the underlying "
+      "concepts, and the discipline of making the software actually work exposed gaps in "
+      "understanding that were then addressed. This hands-on, experiential learning is the heart of "
+      "an engineering internship.")
+    h2("6.6  Learning through Debugging")
+    p("A surprising amount was learned through the process of debugging. Every error encountered "
+      "during development was an opportunity to understand the technology more deeply. Tracing the "
+      "cause of a rendering glitch or a logical mistake, and then correcting it, built both "
+      "technical knowledge and the patience and persistence that problem solving demands.")
+    h2("6.7  Iterative Refinement")
+    p("The project was developed iteratively, with each version improving upon the last. This "
+      "iterative method of working \u2014 building a simple version, evaluating it, and refining it "
+      "step by step \u2014 was itself an important lesson in how real software is created. The "
+      "progression from the initial prototype to the advanced system exemplifies this approach.")
+    h2("6.8  Learning through Documentation")
+    p("Documenting the work was not merely a record-keeping exercise but a method of learning in "
+      "its own right. Explaining the design and the code in writing forced a clearer understanding "
+      "of them, and the discipline of producing professional documentation taught the importance "
+      "of communicating technical work effectively.")
+    h2("6.9  Summary")
+    tabcap("Summary of learning methods")
+    table([
+        ["Method", "Contribution"],
+        ["Observation", "Insight into professional practice and culture"],
+        ["Mentorship", "Direction, clarification and feedback"],
+        ["Self-study", "Foundational knowledge and independence"],
+        ["Learning by doing", "Practical skill and deep understanding"],
+        ["Debugging", "Problem-solving ability and persistence"],
+        ["Iterative refinement", "Understanding of real development"],
+        ["Documentation", "Clarity and communication skills"],
+    ], widths=[2700, 6660])
+
+def n7_devpages():
+    h1("CHAPTER 7   DEVELOPMENT PAGES DURING INTERNSHIP")
+    h2("7.1  Introduction")
+    p("This chapter describes the pages, or screens, that were developed during the internship as "
+      "part of the Advanced Live Aircraft Tracking System. Each page corresponds to a functional "
+      "module of the application and was developed and tested in turn.", indent=False)
+    h2("7.2  Login Page")
+    p("The application opens with a secure login page that authenticates the operator before "
+      "granting access to the monitoring functions. It presents fields for a user identifier and a "
+      "password and validates the credentials before revealing the main interface. This page "
+      "establishes the access-control aspect of the system.")
+    h2("7.3  Dashboard Page")
+    p("The dashboard is the central page of the application and provides an at-a-glance overview of "
+      "the entire operational picture. It displays key performance indicators such as the number of "
+      "aircraft airborne, the average altitude and speed across the fleet, and the count of active "
+      "alerts, alongside the live map, a feed of recent alerts and a fleet-status table. The "
+      "dashboard updates continuously so that the operator always sees the most current state.")
+    h2("7.4  Live Tracking Page")
+    p("The tracking page allows the operator to examine individual aircraft in detail. It presents "
+      "a searchable, filterable list of all tracked aircraft and, when an aircraft is selected, "
+      "displays its full telemetry including altitude, ground speed, heading, position and status, "
+      "together with derived values such as vertical rate.")
+    h2("7.5  Radar Scope Page")
+    p("The radar scope page reproduces the appearance of a primary surveillance radar. It draws "
+      "concentric range rings, cross hairs and a continuously rotating sweep, with aircraft shown "
+      "as contacts on the display. This page demonstrates polar visualisation of position data and "
+      "real-time animation on the Canvas.")
+    h2("7.6  Analytics Page")
+    p("The analytics page processes the telemetry of the whole fleet to produce statistical "
+      "summaries and charts. It presents an altitude-distribution histogram, a speed profile and a "
+      "table of statistics giving the minimum, maximum and mean of each parameter, illustrating the "
+      "analytical stage of data processing.")
+    h2("7.7  Mission Control Page")
+    p("The mission-control page supports the planning and tracking of flight-test sorties. It lists "
+      "active sorties with their objectives, current phase and progress, and presents a mission "
+      "timeline depicting the standard phases of a sortie from briefing to debrief.")
+    h2("7.8  Alert Feed Page")
+    p("The alert-feed page draws the operator's attention to abnormal conditions. Whenever a "
+      "monitored parameter crosses a defined threshold, an alert is generated, classified by "
+      "severity, time-stamped and added to the feed, with critical alerts visually distinguished "
+      "from cautions.")
+    h2("7.9  Admin Panel Page")
+    p("The administration page provides management functions. It allows new aircraft to be "
+      "registered and existing aircraft to be removed, and it exposes system settings such as the "
+      "data refresh rate and the alert threshold, demonstrating create and delete operations on the "
+      "data model and configurable behaviour.")
+    tabcap("Summary of developed pages")
+    table([
+        ["Page", "Primary Function"],
+        ["Login", "Secure operator authentication"],
+        ["Dashboard", "Consolidated real-time overview"],
+        ["Live Tracking", "Per-aircraft telemetry and detail"],
+        ["Radar Scope", "Polar surveillance display"],
+        ["Analytics", "Statistical summaries and charts"],
+        ["Mission Control", "Sortie planning and tracking"],
+        ["Alert Feed", "Threshold-based alerting"],
+        ["Admin Panel", "Aircraft registry and configuration"],
+    ], widths=[2800, 6560])
+
+def n8_sourcecode():
+    h1("CHAPTER 8   SOURCE CODE")
+    h2("8.1  Introduction")
+    p("This chapter explains the structure and the principal elements of the source code of the "
+      "Advanced Live Aircraft Tracking System. The complete source is provided in the project "
+      "files; here the key parts are described to convey how the system works internally.",
+      indent=False)
+    h2("8.2  Overall Structure")
+    p("The application is contained in a single, self-contained HTML file that includes the markup, "
+      "the styles within a style block and the logic within a script block. This structure keeps "
+      "the demonstration portable while preserving a clear internal separation between structure, "
+      "presentation and behaviour.")
+    h2("8.3  The Aircraft Data Model")
+    p("The state of the system is held in an array of aircraft objects. Each object stores the "
+      "callsign, type, simulated position, altitude, speed, heading and status of one aircraft. "
+      "This array is the single source of truth from which every view is rendered.")
+    code_block([
+        "let aircraft = [",
+        "  {cs:\"HAL-LCH1\", type:\"LCH Prachand\", lat:120, lon:90,",
+        "   alt:14200, spd:165, hdg:90, status:\"ok\"},",
+        "  // ... further aircraft ...",
+        "];",
+    ])
+    h2("8.4  The Simulation and Processing Function")
+    p("On every processing cycle the simulate function advances each aircraft according to its "
+      "heading and speed, introduces small random variations to mimic real telemetry, and then "
+      "derives the status of the aircraft by comparing its parameters against the configured "
+      "thresholds. This single function embodies the simulation, processing and validation stages "
+      "of the data pipeline.")
+    code_block([
+        "function simulate(){",
+        "  aircraft.forEach(a=>{",
+        "    const rad = a.hdg*Math.PI/180;",
+        "    a.lat += Math.cos(rad)*(a.spd/120);",
+        "    a.lon += Math.sin(rad)*(a.spd/120);",
+        "    a.alt += (Math.random()-0.5)*200;",
+        "    if(a.alt > THR())              a.status='crit';",
+        "    else if(a.spd>420||a.alt<5000) a.status='warn';",
+        "    else                           a.status='ok';",
+        "  });",
+        "  renderAll();",
+        "}",
+    ])
+    h2("8.5  Canvas Drawing and Animation")
+    p("The map and radar are drawn using the Canvas two-dimensional context. The drawMap function "
+      "clears the canvas, draws the grid, and then iterates over the aircraft array drawing an "
+      "oriented, colour-coded symbol for each aircraft together with its labels. The radar sweep is "
+      "animated by recomputing the sweep angle from the current time on each frame.")
+    code_block([
+        "function drawMap(){",
+        "  const x = canvas.getContext('2d');",
+        "  x.clearRect(0,0,canvas.width,canvas.height);",
+        "  drawGrid(x);",
+        "  aircraft.forEach(a=>{",
+        "    x.save(); x.translate(px,py); x.rotate(a.hdg*Math.PI/180);",
+        "    x.fillStyle = colourOf(a.status);",
+        "    drawAircraftSymbol(x);",
+        "    x.restore();",
+        "  });",
+        "}",
+    ])
+    h2("8.6  Event Handling and Navigation")
+    p("User interactions are handled through event listeners. A single delegated listener on the "
+      "navigation menu switches between modules by toggling the active page, which is an efficient "
+      "and maintainable pattern.")
+    code_block([
+        "nav.addEventListener('click', e => {",
+        "  const link = e.target.closest('a');",
+        "  if(!link) return;",
+        "  showPage(link.dataset.p);   // switch active module",
+        "});",
+    ])
+    h2("8.7  Timers and Real-time Updates")
+    p("The real-time behaviour of the system is driven by timers. One interval timer invokes the "
+      "simulation and processing function at the configured refresh rate, a faster timer animates "
+      "the radar sweep, and a one-second timer updates the clock. The refresh rate can be changed "
+      "at run time from the administration panel, after which the timer is reset to the new "
+      "interval. Together these elements show how a real-time monitoring application can be built "
+      "entirely with standard web technologies.")
+
+def n9_database():
+    h1("CHAPTER 9   DATABASE")
+    h2("9.1  Introduction")
+    p("Although the demonstration system stores its data in memory within the browser, it is "
+      "designed around a clear logical data model. This chapter presents that model as it would be "
+      "realised in a relational database, were the system to be extended with persistent storage.",
+      indent=False)
+    h2("9.2  Entities and Relationships")
+    p("The principal entities are the Aircraft, the Telemetry record, the Alert and the Sortie, "
+      "together with a User entity for authentication. An aircraft produces many telemetry records "
+      "and may raise many alerts, and a sortie is associated with one aircraft; these one-to-many "
+      "relationships form the backbone of the data model.")
+    h2("9.3  Database Tables")
+    tabcap("AIRCRAFT and TELEMETRY tables")
+    table([
+        ["Table", "Attribute", "Type"],
+        ["AIRCRAFT", "aircraft_id (PK), callsign, type, status", "INTEGER, VARCHAR"],
+        ["TELEMETRY", "telemetry_id (PK), aircraft_id (FK), altitude, speed, heading, timestamp",
+         "INTEGER, FLOAT, DATETIME"],
+        ["ALERT", "alert_id (PK), aircraft_id (FK), severity, message, timestamp",
+         "INTEGER, VARCHAR, DATETIME"],
+    ], widths=[1800, 5560, 2000])
+    p("The AIRCRAFT table is the central table; each row in the TELEMETRY and ALERT tables "
+      "references an aircraft through a foreign key, preserving referential integrity and allowing "
+      "the data to be queried efficiently.")
+
+def n10_benefits():
+    h1("CHAPTER 10   BENEFITS OF INTERNSHIP")
+    h2("10.1  Introduction")
+    p("This chapter summarises the benefits gained from the internship, both for the student and in "
+      "terms of the value of the work produced.", indent=False)
+    h2("10.2  Benefits to the Student")
+    bullet("Practical exposure to a real engineering organisation and its professional culture.")
+    bullet("Hands-on improvement of technical skills in web development and data visualisation.")
+    bullet("Valuable domain knowledge of flight testing and data processing.")
+    bullet("Development of communication, documentation and problem-solving abilities.")
+    bullet("An appreciation of safety, accuracy and discipline in engineering work.")
+    h2("10.3  Benefits of the Developed System")
+    p("The system developed during the internship offers genuine practical benefits. It provides "
+      "real-time monitoring and immediate situational awareness; it improves safety by raising "
+      "alerts the moment a parameter crosses a threshold; it integrates several complementary "
+      "visualisations into a single dashboard, reducing operator workload; and it is portable, "
+      "running in any modern browser without special hardware. By consolidating and clearly "
+      "presenting processed information, it supports timely and well-informed decisions.")
+    tabcap("Summary of benefits")
+    table([
+        ["Benefit", "Description"],
+        ["Real-time monitoring", "Immediate situational awareness"],
+        ["Improved safety", "Early detection of abnormal conditions"],
+        ["Integrated visualisation", "Reduced operator workload"],
+        ["Portability", "Runs on any modern browser and platform"],
+        ["Skill development", "Technical and professional growth for the student"],
+    ], widths=[3000, 6360])
+
+def n11_jobs():
+    h1("CHAPTER 11   JOB OPPORTUNITIES")
+    h2("11.1  Introduction")
+    p("The skills and knowledge gained during this internship open up a range of career "
+      "opportunities in the software and technology industry. This chapter outlines some of the "
+      "roles for which the internship provides relevant preparation.", indent=False)
+    h2("11.2  Relevant Career Roles")
+    bullet("Front-End Developer \u2014 building user interfaces with HTML, CSS and JavaScript.")
+    bullet("Web Application Developer \u2014 developing complete browser-based applications.")
+    bullet("Software Engineer \u2014 designing, building and testing software systems.")
+    bullet("Data Visualisation Developer \u2014 creating dashboards and visual analytics tools.")
+    bullet("UI / UX Developer \u2014 designing usable and attractive interfaces.")
+    bullet("Junior Software Engineer in aerospace or defence technology organisations.")
+    h2("11.3  Industry Demand")
+    p("There is strong and growing demand for professionals skilled in front-end and web "
+      "development, particularly those who can build real-time, data-driven interfaces. The ability "
+      "to process and visualise data clearly is valued across many industries, including aerospace, "
+      "finance, healthcare, logistics and the public sector. The internship therefore positions the "
+      "student well for entry into this expanding field.")
+    h2("11.4  Foundation for Further Growth")
+    p("Beyond immediate employment, the internship provides a foundation for continued professional "
+      "growth. The experience of working in a disciplined engineering environment, combined with "
+      "the technical skills acquired, prepares the student to take on increasingly responsible "
+      "roles and to specialise further in areas such as real-time systems, data analytics or "
+      "full-stack development.")
+
+def n12_objectives():
+    h1("CHAPTER 12   OBJECTIVES")
+    h2("12.1  Introduction")
+    p("This chapter sets out the objectives of the internship and of the project developed during "
+      "it. Clear objectives guided the activities throughout and provided the criteria against "
+      "which the success of the internship can be judged.", indent=False)
+    h2("12.2  Objectives of the Internship")
+    bullet("To understand the structure, functions and engineering culture of a national aerospace organisation.")
+    bullet("To study the role of the Flight Testing Centre and the importance of flight data in certifying aircraft.")
+    bullet("To learn the principles of flight test instrumentation, telemetry and data processing.")
+    bullet("To apply software-engineering knowledge to build a practical data-processing and visualisation tool.")
+    bullet("To cultivate professional discipline, documentation skills and an appreciation of engineering safety.")
+    h2("12.3  Objectives of the Project")
+    bullet("To process simulated live telemetry such as altitude, speed and heading for multiple aircraft.")
+    bullet("To visualise aircraft positions on a live map and on a radar scope in real time.")
+    bullet("To raise alerts automatically when monitored parameters cross defined thresholds.")
+    bullet("To summarise processed data through key indicators and analytics charts.")
+    bullet("To present all information through a clear, professional and responsive interface.")
+    h2("12.4  Problem Statement and Need")
+    p("Flight testing produces a continuous stream of telemetry that must be monitored in real time "
+      "so that the test team retains complete situational awareness and can react instantly to any "
+      "abnormal condition. Without an integrated visual tool, monitoring numerous parameters for "
+      "several aircraft simultaneously is difficult and error-prone. The project addresses this "
+      "need by providing accessible, integrated and visual monitoring of live aircraft telemetry, "
+      "reducing operator workload and improving safety.")
+    h2("12.5  Scope")
+    p("The scope of the project is the real-time processing and visualisation of simulated aircraft "
+      "telemetry within a browser-based application. It demonstrates the monitoring and "
+      "visualisation stages of the flight-data-processing workflow on a safe and reduced scale, and "
+      "it is designed so that it can be extended in future to work with real telemetry sources.")
+
+def n13_conclusion():
+    h1("CHAPTER 13   CONCLUSION")
+    p("The industrial internship at the Flight Testing Centre of the Rotary Wing Research & Design "
+      "Centre, Hindustan Aeronautics Limited, has been an enriching and formative experience. It "
+      "provided a rare opportunity to work within a premier national aerospace organisation and to "
+      "understand, at first hand, the disciplined and safety-conscious environment in which "
+      "advanced aircraft are developed and tested.", indent=False)
+    p("The internship achieved its stated objectives. The structure and functions of HAL and of "
+      "the design centre were studied; the principles of flight testing, instrumentation, telemetry "
+      "and data processing were understood; and this understanding was consolidated through the "
+      "design and development of the Advanced Live Aircraft Tracking and Flight Data Processing "
+      "System. The project successfully demonstrates, on a safe and reduced scale, how live "
+      "telemetry can be processed and visualised to support monitoring and safety at a flight "
+      "testing centre.")
+    p("Through this work I have grown both technically and professionally. I have strengthened my "
+      "skills in web development, real-time visualisation and software engineering, and I have "
+      "gained valuable domain knowledge of the aerospace field. Equally important, I have absorbed "
+      "the professional values of accuracy, discipline, documentation and safety that characterise "
+      "the organisation.")
+    p("The system also opens up numerous avenues for future enhancement, from integration with real "
+      "telemetry to the application of artificial intelligence, predictive analytics, cloud storage "
+      "and geographic mapping. These possibilities make the project not only a demonstration of "
+      "what has been learned but also a foundation for further work.")
+    p("In conclusion, the internship has been a significant milestone in my education. It has "
+      "bridged the gap between academic study and professional practice, deepened my interest in "
+      "the field, and prepared me to contribute as a competent and responsible software engineer. "
+      "I am sincerely grateful to all who made this valuable experience possible.")
+
+def n14_bibliography():
+    h1("CHAPTER 14   BIBLIOGRAPHY")
+    p("The following references, presented in IEEE citation style, were consulted during the "
+      "internship and the preparation of this report.", indent=False)
+    refs = [
+        "Hindustan Aeronautics Limited, \u201cAbout HAL \u2014 Company Profile and Products,\u201d "
+        "Official Corporate Publications, Bengaluru, India.",
+        "Rotary Wing Research & Design Centre (RWR&DC), HAL, \u201cHelicopter Design and "
+        "Development Overview,\u201d Technical Documentation.",
+        "R. C. Nelson, Flight Stability and Automatic Control, 2nd ed. New York, NY, USA: "
+        "McGraw-Hill, 1998.",
+        "A. Cooke and E. Fitzpatrick, Helicopter Test and Evaluation. Oxford, U.K.: Blackwell "
+        "Science, 2002.",
+        "Mozilla Developer Network, \u201cHTML5, CSS3 and the Canvas API \u2014 Web Documentation,\u201d "
+        "Mozilla Foundation. [Online]. Available: https://developer.mozilla.org",
+        "World Wide Web Consortium (W3C), \u201cHTML and CSS Standards,\u201d W3C Recommendations. "
+        "[Online]. Available: https://www.w3.org",
+        "D. Flanagan, JavaScript: The Definitive Guide, 7th ed. Sebastopol, CA, USA: O\u2019Reilly "
+        "Media, 2020.",
+        "R. S. Pressman and B. R. Maxim, Software Engineering: A Practitioner\u2019s Approach, "
+        "8th ed. New York, NY, USA: McGraw-Hill Education, 2015.",
+        "ECMA International, \u201cECMAScript Language Specification (ECMA-262),\u201d Geneva, "
+        "Switzerland.",
+        "International Society of Automation, \u201cTelemetry and Data Acquisition Standards,\u201d "
+        "Technical Standards.",
+    ]
+    for i, r in enumerate(refs, 1):
+        add(para(run(f"[{i}]  ", bold=True, size=12, font="Times New Roman")
+                 + run(r, size=12, font="Times New Roman"),
+                 align="both", spacing_after=120, line=360, left=540, hanging=540))
+
+# ======================================================================
 # ASSEMBLE THE DOCUMENT
 # ======================================================================
 def build():
@@ -1952,10 +2584,10 @@ def build():
     acknowledgement_page()
     abstract_page()
     toc_page()
-    # --- Chapters ---
-    for fn in [chapter1, chapter2, chapter3, chapter4, chapter5, chapter6, chapter7,
-               chapter8, chapter9, chapter10, chapter11, chapter12, chapter13, chapter14,
-               chapter15, chapter16, chapter17, chapter18, chapter19, chapter20, appendix]:
+    # --- Chapters (14-chapter structure matching the INDEX) ---
+    for fn in [n1_company, n2_activities, n3_requirements, n4_tools, n5_technologies,
+               n6_learning, n7_devpages, n8_sourcecode, n9_database, n10_benefits,
+               n11_jobs, n12_objectives, n13_conclusion, n14_bibliography]:
         fn()
 
 def package(out_path):
