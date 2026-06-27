@@ -2489,38 +2489,49 @@ def n7_devpages():
       "module of the application and was developed and tested in turn. A placeholder is provided "
       "for the screenshot of each page, in which the actual captured image should be inserted "
       "before submission.", indent=False)
+    h2("7.2  System Architecture")
+    p("Before describing the individual pages, it is useful to view the overall architecture of "
+      "the application. The system follows a layered client-side architecture in which a data layer "
+      "holds the aircraft model, an application layer simulates and processes the telemetry, and a "
+      "presentation layer renders the various pages and visualisations.", indent=False)
+    diagram_layers([
+        ("Presentation Layer", ["Dashboard", "Tracking", "Radar", "Analytics", "Mission / Alerts"]),
+        ("Application / Processing Layer", ["Simulation Engine", "Telemetry Processing", "Alert Engine"]),
+        ("Data Layer", ["Aircraft Data Model", "Alert Store", "Configuration"]),
+    ])
+    figcap("Layered system architecture of the application")
     pages = [
-        ("7.2  Login Page",
+        ("7.3  Login Page",
          "The application opens with a secure login page that authenticates the operator before "
          "granting access to the system. It validates the user identifier and password before "
          "revealing the main interface.",
          "Login Page"),
-        ("7.3  Dashboard Page",
+        ("7.4  Dashboard Page",
          "The dashboard is the central page and provides an at-a-glance overview through key "
          "indicators, the live map, a recent-alerts feed and a fleet-status table, all updating in "
          "real time.",
          "Dashboard Page"),
-        ("7.4  Live Tracking Page",
+        ("7.5  Live Tracking Page",
          "The tracking page presents a searchable list of aircraft and, on selection, shows the "
          "full telemetry of the chosen aircraft including altitude, speed, heading and status.",
          "Live Tracking Page"),
-        ("7.5  Radar Scope Page",
+        ("7.6  Radar Scope Page",
          "The radar page reproduces a primary surveillance radar with range rings, cross hairs, a "
          "rotating sweep and aircraft contacts, demonstrating real-time animation on the Canvas.",
          "Radar Scope Page"),
-        ("7.6  Analytics Page",
+        ("7.7  Analytics Page",
          "The analytics page processes fleet telemetry to produce an altitude histogram, a speed "
          "profile and a statistics table giving the minimum, maximum and mean of each parameter.",
          "Analytics Page"),
-        ("7.7  Mission Control Page",
+        ("7.8  Mission Control Page",
          "The mission-control page lists active sorties with their objectives, phase and progress, "
          "and presents a timeline of the standard phases of a flight-test sortie.",
          "Mission Control Page"),
-        ("7.8  Alert Feed Page",
+        ("7.9  Alert Feed Page",
          "The alert-feed page lists all generated alerts, classified by severity and time-stamped, "
          "with critical alerts visually distinguished from cautions.",
          "Alert Feed Page"),
-        ("7.9  Admin Panel Page",
+        ("7.10  Admin Panel Page",
          "The administration page allows aircraft to be registered or removed and exposes settings "
          "such as the refresh rate and the alert threshold.",
          "Admin Panel Page"),
@@ -2543,7 +2554,33 @@ def n8_sourcecode():
       "the styles within a style block and the logic within a script block. This structure keeps "
       "the demonstration portable while preserving a clear internal separation between structure, "
       "presentation and behaviour.")
-    h2("8.3  The Aircraft Data Model")
+    h2("8.3  System Flowchart")
+    p("The flowchart below shows the overall flow of control of the application, from the operator "
+      "logging in to the continuous real-time processing loop that drives every visualisation.",
+      indent=False)
+    diagram_flow([
+        "Start \u2192 Operator Login",
+        "Initialise data model and views",
+        "Timer triggers a processing cycle",
+        "Simulate and process telemetry of each aircraft",
+        "Compare parameters against thresholds",
+        "Raise alert if a threshold is crossed",
+        "Redraw map, radar, tables and charts",
+        "Repeat until logout \u2192 End",
+    ])
+    figcap("System flowchart of the real-time processing loop")
+    h2("8.4  Data Flow Diagram")
+    p("The data flow diagram describes how data moves through the system, from the telemetry "
+      "source, through the processing stages, to the displays seen by the operator.", indent=False)
+    diagram_flow([
+        "1.0  Acquire / Simulate Telemetry",
+        "2.0  Process and Validate Parameters",
+        "3.0  Evaluate Alert Thresholds",
+        "4.0  Update Data Store",
+        "5.0  Render Visualisations and Dashboard",
+    ])
+    figcap("Data Flow Diagram (Level 1) of the system")
+    h2("8.5  The Aircraft Data Model")
     p("The state of the system is held in an array of aircraft objects. Each object stores the "
       "callsign, type, simulated position, altitude, speed, heading and status of one aircraft. "
       "This array is the single source of truth from which every view is rendered.")
@@ -2554,7 +2591,7 @@ def n8_sourcecode():
         "  // ... further aircraft ...",
         "];",
     ])
-    h2("8.4  The Simulation and Processing Function")
+    h2("8.6  The Simulation and Processing Function")
     p("On every processing cycle the simulate function advances each aircraft according to its "
       "heading and speed, introduces small random variations to mimic real telemetry, and then "
       "derives the status of the aircraft by comparing its parameters against the configured "
@@ -2574,7 +2611,7 @@ def n8_sourcecode():
         "  renderAll();",
         "}",
     ])
-    h2("8.5  Canvas Drawing and Animation")
+    h2("8.7  Canvas Drawing and Animation")
     p("The map and radar are drawn using the Canvas two-dimensional context. The drawMap function "
       "clears the canvas, draws the grid, and then iterates over the aircraft array drawing an "
       "oriented, colour-coded symbol for each aircraft together with its labels. The radar sweep is "
@@ -2592,7 +2629,7 @@ def n8_sourcecode():
         "  });",
         "}",
     ])
-    h2("8.6  Event Handling and Navigation")
+    h2("8.8  Event Handling and Navigation")
     p("User interactions are handled through event listeners. A single delegated listener on the "
       "navigation menu switches between modules by toggling the active page, which is an efficient "
       "and maintainable pattern.")
@@ -2603,14 +2640,14 @@ def n8_sourcecode():
         "  showPage(link.dataset.p);   // switch active module",
         "});",
     ])
-    h2("8.7  Timers and Real-time Updates")
+    h2("8.9  Timers and Real-time Updates")
     p("The real-time behaviour of the system is driven by timers. One interval timer invokes the "
       "simulation and processing function at the configured refresh rate, a faster timer animates "
       "the radar sweep, and a one-second timer updates the clock. The refresh rate can be changed "
       "at run time from the administration panel, after which the timer is reset to the new "
       "interval. Together these elements show how a real-time monitoring application can be built "
       "entirely with standard web technologies.")
-    h2("8.8  Processing Fleet Statistics")
+    h2("8.10  Processing Fleet Statistics")
     p("The analytics module computes summary statistics for the whole fleet. Using the array "
       "reduce method, the average of a parameter such as altitude or speed is obtained in a single "
       "concise expression, while the minimum and maximum are found with the corresponding helper "
@@ -2622,7 +2659,7 @@ def n8_sourcecode():
         "const maxAlt = Math.max(...aircraft.map(a=>a.alt));",
         "const minAlt = Math.min(...aircraft.map(a=>a.alt));",
     ])
-    h2("8.9  Generating and Storing Alerts")
+    h2("8.11  Generating and Storing Alerts")
     p("Alerts are generated whenever a monitored parameter crosses a threshold. Each alert is "
       "represented as an object carrying its severity, message and time, and is added to the front "
       "of an alert array so that the most recent alert appears first. The array is capped at a "
@@ -2633,7 +2670,7 @@ def n8_sourcecode():
         "  if(alerts.length > 40) alerts.pop();   // keep the list bounded",
         "}",
     ])
-    h2("8.10  Rendering Data Tables")
+    h2("8.12  Rendering Data Tables")
     p("The fleet and tracking tables are produced by mapping the aircraft array to rows of markup "
       "and writing the result into the document. This declarative style, in which the display is "
       "derived directly from the data, keeps the interface consistent with the underlying state "
@@ -2644,7 +2681,7 @@ def n8_sourcecode():
         "      <td>${Math.round(a.alt)}</td><td>${badge(a.status)}</td></tr>",
         "`).join('');",
     ])
-    h2("8.11  Coding Style and Maintainability")
+    h2("8.13  Coding Style and Maintainability")
     p("Throughout the source code, meaningful names, small single-purpose functions and consistent "
       "formatting were used to keep the program readable and maintainable. The clear separation of "
       "the data model, the processing logic, the rendering functions and the event handlers means "
