@@ -40,27 +40,30 @@ def esc(t):
 # ----------------------------------------------------------------------
 # Run + paragraph builders
 # ----------------------------------------------------------------------
-def run(text, bold=False, italic=False, size=None, color=None, font=None):
-    # rPr child order per CT_RPr: rFonts, b, i, color, sz, szCs
+def run(text, bold=False, italic=False, size=None, color=None, font=None, underline=False):
+    # rPr child order per CT_RPr: rFonts, b, i, color, sz, szCs, u
     rpr = "<w:rPr>"
     if font: rpr += f'<w:rFonts w:ascii="{font}" w:hAnsi="{font}" w:cs="{font}"/>'
     if bold: rpr += "<w:b/>"
     if italic: rpr += "<w:i/>"
     if color: rpr += f'<w:color w:val="{color}"/>'
     if size: rpr += f'<w:sz w:val="{int(size*2)}"/><w:szCs w:val="{int(size*2)}"/>'
+    if underline: rpr += '<w:u w:val="single"/>'
     rpr += "</w:rPr>"
     return f'<w:r>{rpr}<w:t xml:space="preserve">{esc(text)}</w:t></w:r>'
 
 def para(runs_xml, align="both", style=None, spacing_before=0, spacing_after=120,
-         line=360, indent=0, keep=False, left=0, hanging=0, border=None):
+         line=360, indent=0, keep=False, left=0, hanging=0, border=None, shade=None):
     # NOTE: element order must follow the CT_PPr schema sequence:
-    #   pStyle -> keepNext -> pBdr -> spacing -> ind -> jc
+    #   pStyle -> keepNext -> pBdr -> shd -> spacing -> ind -> jc
     ppr = "<w:pPr>"
     if style: ppr += f'<w:pStyle w:val="{style}"/>'
     if keep: ppr += "<w:keepNext/>"
     if border:  # 'top' or 'bottom'
         ppr += (f'<w:pBdr><w:{border} w:val="single" w:sz="4" w:space="1" '
                 f'w:color="999999"/></w:pBdr>')
+    if shade:
+        ppr += f'<w:shd w:val="clear" w:color="auto" w:fill="{shade}"/>'
     ppr += (f'<w:spacing w:before="{spacing_before}" w:after="{spacing_after}" '
             f'w:line="{line}" w:lineRule="auto"/>')
     ind_attrs = ""
@@ -209,6 +212,99 @@ def diagram_layers(layers):
         if li < len(layers) - 1:
             _arrow_down()
     add(para(run("", size=6, font="Times New Roman"), spacing_after=60, line=120))
+
+def _er_attr_para(text, role=""):
+    r = run(text, size=10, font="Times New Roman",
+            bold=(role == "pk"), underline=(role == "pk"), italic=(role == "fk"))
+    return para(r, align="left", spacing_before=10, spacing_after=10, line=220)
+
+def _er_entity_tc(name, attrs, w):
+    """An ER entity rendered inside a single bordered cell: a shaded title row
+    followed by its attributes (PK bold+underlined, FK italic)."""
+    header = para(run(name, bold=True, size=11, color="FFFFFF", font="Times New Roman"),
+                  align="center", shade="1F3864", spacing_before=20, spacing_after=20, line=220)
+    body = "".join(_er_attr_para(t, role) for t, role in attrs)
+    tcpr = (f'<w:tcPr><w:tcW w:w="{w}" w:type="dxa"/>'
+            '<w:tcBorders>'
+            '<w:top w:val="single" w:sz="12" w:color="1F3864"/>'
+            '<w:left w:val="single" w:sz="12" w:color="1F3864"/>'
+            '<w:bottom w:val="single" w:sz="12" w:color="1F3864"/>'
+            '<w:right w:val="single" w:sz="12" w:color="1F3864"/>'
+            '</w:tcBorders>'
+            '<w:tcMar><w:top w:w="40" w:type="dxa"/><w:bottom w:w="40" w:type="dxa"/>'
+            '<w:left w:w="80" w:type="dxa"/><w:right w:w="80" w:type="dxa"/></w:tcMar>'
+            '<w:vAlign w:val="top"/></w:tcPr>')
+    return f"<w:tc>{tcpr}{header}{body}</w:tc>"
+
+def er_single(name, attrs, w=4800):
+    cell = _er_entity_tc(name, attrs, w)
+    tbl = ('<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:jc w:val="center"/>'
+           '<w:tblLook w:val="04A0"/></w:tblPr>'
+           f'<w:tblGrid><w:gridCol w:w="{w}"/></w:tblGrid>'
+           f'<w:tr>{cell}</w:tr></w:tbl>')
+    add(tbl)
+
+def er_pair(e1, e2, w=4400, gap=560):
+    """Two entity boxes side by side, separated by a gap column."""
+    c1 = _er_entity_tc(e1[0], e1[1], w)
+    c2 = _er_entity_tc(e2[0], e2[1], w)
+    gap_cell = ('<w:tc><w:tcPr><w:tcW w:w="' + str(gap) + '" w:type="dxa"/>'
+                '<w:tcBorders><w:top w:val="nil"/><w:left w:val="nil"/>'
+                '<w:bottom w:val="nil"/><w:right w:val="nil"/></w:tcBorders></w:tcPr>'
+                '<w:p><w:pPr><w:spacing w:after="0"/></w:pPr></w:p></w:tc>')
+    tbl = ('<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:jc w:val="center"/>'
+           '<w:tblLook w:val="04A0"/></w:tblPr>'
+           f'<w:tblGrid><w:gridCol w:w="{w}"/><w:gridCol w:w="{gap}"/><w:gridCol w:w="{w}"/></w:tblGrid>'
+           f'<w:tr>{c1}{gap_cell}{c2}</w:tr></w:tbl>')
+    add(tbl)
+
+def er_relationship(top_card, verb, bottom_card):
+    """Vertical relationship connector with cardinality labels and a verb."""
+    add(para(run(top_card, bold=True, size=11, font="Times New Roman", color="C00000"),
+             align="center", spacing_before=20, spacing_after=0, line=180))
+    add(para(run("\u2502", size=11, font="Times New Roman", color="1F3864"),
+             align="center", spacing_before=0, spacing_after=0, line=160))
+    add(para(run("\u25C7 " + verb + " \u25C7", italic=True, size=10, font="Times New Roman",
+                 color="1F3864"),
+             align="center", spacing_before=0, spacing_after=0, line=180))
+    add(para(run("\u2502", size=11, font="Times New Roman", color="1F3864"),
+             align="center", spacing_before=0, spacing_after=0, line=160))
+    add(para(run(bottom_card, bold=True, size=11, font="Times New Roman", color="C00000"),
+             align="center", spacing_before=0, spacing_after=20, line=180))
+
+def er_fork(left_card, left_verb, right_verb, right_card):
+    """A branching connector: one parent splitting to two child entities."""
+    # cardinality near parent
+    add(para(run("1", bold=True, size=11, font="Times New Roman", color="C00000"),
+             align="center", spacing_before=20, spacing_after=0, line=180))
+    # two verbs side by side
+    lcell = ('<w:tc><w:tcPr><w:tcW w:w="4680" w:type="dxa"/></w:tcPr>'
+             + para(run("\u2199 " + left_verb, italic=True, size=10, font="Times New Roman",
+                        color="1F3864"), align="center", spacing_after=0, line=180) + '</w:tc>')
+    rcell = ('<w:tc><w:tcPr><w:tcW w:w="4680" w:type="dxa"/></w:tcPr>'
+             + para(run(right_verb + " \u2198", italic=True, size=10, font="Times New Roman",
+                        color="1F3864"), align="center", spacing_after=0, line=180) + '</w:tc>')
+    tbl = ('<w:tbl><w:tblPr><w:tblW w:w="9360" w:type="dxa"/><w:jc w:val="center"/>'
+           '<w:tblBorders><w:top w:val="nil"/><w:left w:val="nil"/><w:bottom w:val="nil"/>'
+           '<w:right w:val="nil"/><w:insideH w:val="nil"/><w:insideV w:val="nil"/></w:tblBorders>'
+           '<w:tblLook w:val="04A0"/></w:tblPr>'
+           '<w:tblGrid><w:gridCol w:w="4680"/><w:gridCol w:w="4680"/></w:tblGrid>'
+           f'<w:tr>{lcell}{rcell}</w:tr></w:tbl>')
+    add(tbl)
+    # cardinality near the two children
+    lc = ('<w:tc><w:tcPr><w:tcW w:w="4680" w:type="dxa"/></w:tcPr>'
+          + para(run(left_card, bold=True, size=11, font="Times New Roman", color="C00000"),
+                 align="center", spacing_after=20, line=180) + '</w:tc>')
+    rc = ('<w:tc><w:tcPr><w:tcW w:w="4680" w:type="dxa"/></w:tcPr>'
+          + para(run(right_card, bold=True, size=11, font="Times New Roman", color="C00000"),
+                 align="center", spacing_after=20, line=180) + '</w:tc>')
+    tbl2 = ('<w:tbl><w:tblPr><w:tblW w:w="9360" w:type="dxa"/><w:jc w:val="center"/>'
+            '<w:tblBorders><w:top w:val="nil"/><w:left w:val="nil"/><w:bottom w:val="nil"/>'
+            '<w:right w:val="nil"/><w:insideH w:val="nil"/><w:insideV w:val="nil"/></w:tblBorders>'
+            '<w:tblLook w:val="04A0"/></w:tblPr>'
+            '<w:tblGrid><w:gridCol w:w="4680"/><w:gridCol w:w="4680"/></w:tblGrid>'
+            f'<w:tr>{lc}{rc}</w:tr></w:tbl>')
+    add(tbl2)
 
 def screenshot_placeholder(label):
     """A bordered empty box acting as a screenshot placeholder."""
@@ -2580,16 +2676,31 @@ def n9_database():
     p("The AIRCRAFT table is the central table; each row in the TELEMETRY and ALERT tables "
       "references an aircraft through a foreign key, preserving referential integrity and allowing "
       "the data to be queried efficiently.")
-    h2("9.4  Entity-Relationship Overview")
-    p("The relationships between the entities can be visualised as an entity-relationship diagram. "
-      "The AIRCRAFT entity sits at the centre, linked by one-to-many relationships to TELEMETRY and "
-      "ALERT, while SORTIE references the aircraft assigned to it and USER oversees the sorties.",
-      indent=False)
-    diagram_layers([
-        ("Entities and Relationships",
-         ["USER", "SORTIE", "AIRCRAFT", "TELEMETRY", "ALERT"]),
-    ])
-    figcap("Entity-relationship overview of the data model")
+    h2("9.4  Entity-Relationship (ER) Diagram")
+    p("The entity-relationship diagram below presents the complete data model. Each entity is "
+      "shown with its attributes, where the primary key is bold and underlined and each foreign "
+      "key is shown in italics. The connectors indicate the relationships between the entities "
+      "together with their cardinality, expressed in the one-to-many (1 : N) form.", indent=False)
+    er_single("USER", [("user_id  (PK)", "pk"), ("username", ""), ("role", "")])
+    er_relationship("1", "oversees", "N")
+    er_single("SORTIE", [("sortie_id  (PK)", "pk"), ("aircraft_id  (FK)", "fk"),
+                         ("objective", ""), ("phase", ""), ("progress", "")])
+    er_relationship("N", "assigned to", "1")
+    er_single("AIRCRAFT", [("aircraft_id  (PK)", "pk"), ("callsign", ""),
+                           ("type", ""), ("status", "")])
+    er_fork("N", "generates", "raises", "N")
+    er_pair(
+        ("TELEMETRY", [("telemetry_id  (PK)", "pk"), ("aircraft_id  (FK)", "fk"),
+                       ("altitude", ""), ("speed", ""), ("heading", ""), ("timestamp", "")]),
+        ("ALERT", [("alert_id  (PK)", "pk"), ("aircraft_id  (FK)", "fk"),
+                   ("severity", ""), ("message", ""), ("timestamp", "")]),
+    )
+    figcap("Entity-Relationship (ER) diagram of the data model")
+    p("As the diagram shows, AIRCRAFT is the central entity. One USER oversees many SORTIE records; "
+      "each SORTIE is assigned to exactly one AIRCRAFT, while one AIRCRAFT may appear in many "
+      "sorties. One AIRCRAFT generates many TELEMETRY records and raises many ALERT records. These "
+      "one-to-many relationships, enforced through the foreign keys shown in italics, preserve the "
+      "integrity of the data and allow it to be queried efficiently.")
     h2("9.5  Sample Data")
     tabcap("Sample AIRCRAFT records")
     table([
