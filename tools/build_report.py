@@ -462,16 +462,63 @@ TOC_ENTRIES = [
     ("", "Appendix", "60"),
 ]
 
+def _index_cell(text, w, align="center", bold=False, size=13, header=False):
+    # bold black borders, white background, vertically centred, tall rows
+    tcpr = (f'<w:tcPr><w:tcW w:w="{w}" w:type="dxa"/>'
+            '<w:tcBorders>'
+            '<w:top w:val="single" w:sz="12" w:color="000000"/>'
+            '<w:left w:val="single" w:sz="12" w:color="000000"/>'
+            '<w:bottom w:val="single" w:sz="12" w:color="000000"/>'
+            '<w:right w:val="single" w:sz="12" w:color="000000"/>'
+            '</w:tcBorders>'
+            '<w:tcMar>'
+            '<w:top w:w="120" w:type="dxa"/><w:bottom w:w="120" w:type="dxa"/>'
+            '<w:left w:w="120" w:type="dxa"/><w:right w:w="120" w:type="dxa"/>'
+            '</w:tcMar><w:vAlign w:val="center"/></w:tcPr>')
+    pc = para(run(text, bold=bold, size=size, font="Times New Roman"),
+              align=align, spacing_before=80, spacing_after=80, line=240)
+    return f"<w:tc>{tcpr}{pc}</w:tc>"
+
+def index_table(rows, widths):
+    """Render an INDEX table matching the standard college report style:
+    bold black borders, bold header (Chapter | Particulars | Page),
+    centred chapter number, left particulars, centred page."""
+    grid = "".join(f'<w:gridCol w:w="{w}"/>' for w in widths)
+    tbl = ('<w:tbl><w:tblPr><w:tblStyle w:val="TableGrid"/>'
+           '<w:tblW w:w="9360" w:type="dxa"/><w:jc w:val="center"/>'
+           '<w:tblBorders>'
+           '<w:top w:val="single" w:sz="12" w:color="000000"/>'
+           '<w:left w:val="single" w:sz="12" w:color="000000"/>'
+           '<w:bottom w:val="single" w:sz="12" w:color="000000"/>'
+           '<w:right w:val="single" w:sz="12" w:color="000000"/>'
+           '<w:insideH w:val="single" w:sz="12" w:color="000000"/>'
+           '<w:insideV w:val="single" w:sz="12" w:color="000000"/>'
+           '</w:tblBorders><w:tblLook w:val="04A0"/></w:tblPr>'
+           f'<w:tblGrid>{grid}</w:tblGrid>')
+    # header row
+    tbl += ('<w:tr><w:trPr><w:tblHeader/></w:trPr>'
+            + _index_cell("Chapter", widths[0], align="center", bold=True, size=14)
+            + _index_cell("Particulars", widths[1], align="center", bold=True, size=14)
+            + _index_cell("Page", widths[2], align="center", bold=True, size=14)
+            + "</w:tr>")
+    for num, title, pg in rows:
+        tbl += ("<w:tr>"
+                + _index_cell(num, widths[0], align="center", size=13)
+                + _index_cell(title, widths[1], align="left", size=13)
+                + _index_cell(pg, widths[2], align="center", size=11)
+                + "</w:tr>")
+    tbl += "</w:tbl>"
+    add(tbl)
+
 def toc_page():
-    h1("TABLE OF CONTENTS")
-    rows = [["Ch.", "Title", "Page"]]
-    for num, title, pg in TOC_ENTRIES:
-        rows.append([num, title, pg])
-    table(rows, widths=[900, 7460, 1000], header=True, font_size=11)
-    # List of figures / tables note
-    blank(1)
-    p("A complete list of figures and tables, with their captions, appears alongside the "
-      "respective illustrations throughout this report.", indent=False)
+    page_break()
+    # Centred bold "INDEX" title
+    add(para(run("INDEX", bold=True, size=20, font="Times New Roman"),
+             align="center", spacing_before=120, spacing_after=240, line=360, keep=True))
+    # Only the numbered chapters and appendix are listed, matching the sample style.
+    rows = [(num, title, pg) for (num, title, pg) in TOC_ENTRIES if num] \
+           + [("", "Appendix", "60")]
+    index_table(rows, widths=[1500, 6360, 1500])
 
 print("Front matter loaded.")
 
