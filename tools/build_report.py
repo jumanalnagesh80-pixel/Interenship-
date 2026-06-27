@@ -2269,59 +2269,50 @@ def n7_devpages():
     h2("7.1  Introduction")
     p("This chapter describes the pages, or screens, that were developed during the internship as "
       "part of the Advanced Live Aircraft Tracking System. Each page corresponds to a functional "
-      "module of the application and was developed and tested in turn.", indent=False)
-    h2("7.2  Login Page")
-    p("The application opens with a secure login page that authenticates the operator before "
-      "granting access to the monitoring functions. It presents fields for a user identifier and a "
-      "password and validates the credentials before revealing the main interface. This page "
-      "establishes the access-control aspect of the system.")
-    h2("7.3  Dashboard Page")
-    p("The dashboard is the central page of the application and provides an at-a-glance overview of "
-      "the entire operational picture. It displays key performance indicators such as the number of "
-      "aircraft airborne, the average altitude and speed across the fleet, and the count of active "
-      "alerts, alongside the live map, a feed of recent alerts and a fleet-status table. The "
-      "dashboard updates continuously so that the operator always sees the most current state.")
-    h2("7.4  Live Tracking Page")
-    p("The tracking page allows the operator to examine individual aircraft in detail. It presents "
-      "a searchable, filterable list of all tracked aircraft and, when an aircraft is selected, "
-      "displays its full telemetry including altitude, ground speed, heading, position and status, "
-      "together with derived values such as vertical rate.")
-    h2("7.5  Radar Scope Page")
-    p("The radar scope page reproduces the appearance of a primary surveillance radar. It draws "
-      "concentric range rings, cross hairs and a continuously rotating sweep, with aircraft shown "
-      "as contacts on the display. This page demonstrates polar visualisation of position data and "
-      "real-time animation on the Canvas.")
-    h2("7.6  Analytics Page")
-    p("The analytics page processes the telemetry of the whole fleet to produce statistical "
-      "summaries and charts. It presents an altitude-distribution histogram, a speed profile and a "
-      "table of statistics giving the minimum, maximum and mean of each parameter, illustrating the "
-      "analytical stage of data processing.")
-    h2("7.7  Mission Control Page")
-    p("The mission-control page supports the planning and tracking of flight-test sorties. It lists "
-      "active sorties with their objectives, current phase and progress, and presents a mission "
-      "timeline depicting the standard phases of a sortie from briefing to debrief.")
-    h2("7.8  Alert Feed Page")
-    p("The alert-feed page draws the operator's attention to abnormal conditions. Whenever a "
-      "monitored parameter crosses a defined threshold, an alert is generated, classified by "
-      "severity, time-stamped and added to the feed, with critical alerts visually distinguished "
-      "from cautions.")
-    h2("7.9  Admin Panel Page")
-    p("The administration page provides management functions. It allows new aircraft to be "
-      "registered and existing aircraft to be removed, and it exposes system settings such as the "
-      "data refresh rate and the alert threshold, demonstrating create and delete operations on the "
-      "data model and configurable behaviour.")
-    tabcap("Summary of developed pages")
-    table([
-        ["Page", "Primary Function"],
-        ["Login", "Secure operator authentication"],
-        ["Dashboard", "Consolidated real-time overview"],
-        ["Live Tracking", "Per-aircraft telemetry and detail"],
-        ["Radar Scope", "Polar surveillance display"],
-        ["Analytics", "Statistical summaries and charts"],
-        ["Mission Control", "Sortie planning and tracking"],
-        ["Alert Feed", "Threshold-based alerting"],
-        ["Admin Panel", "Aircraft registry and configuration"],
-    ], widths=[2800, 6560])
+      "module of the application and was developed and tested in turn. A placeholder is provided "
+      "for the screenshot of each page, in which the actual captured image should be inserted "
+      "before submission.", indent=False)
+    pages = [
+        ("7.2  Login Page",
+         "The application opens with a secure login page that authenticates the operator before "
+         "granting access to the system. It validates the user identifier and password before "
+         "revealing the main interface.",
+         "Login Page"),
+        ("7.3  Dashboard Page",
+         "The dashboard is the central page and provides an at-a-glance overview through key "
+         "indicators, the live map, a recent-alerts feed and a fleet-status table, all updating in "
+         "real time.",
+         "Dashboard Page"),
+        ("7.4  Live Tracking Page",
+         "The tracking page presents a searchable list of aircraft and, on selection, shows the "
+         "full telemetry of the chosen aircraft including altitude, speed, heading and status.",
+         "Live Tracking Page"),
+        ("7.5  Radar Scope Page",
+         "The radar page reproduces a primary surveillance radar with range rings, cross hairs, a "
+         "rotating sweep and aircraft contacts, demonstrating real-time animation on the Canvas.",
+         "Radar Scope Page"),
+        ("7.6  Analytics Page",
+         "The analytics page processes fleet telemetry to produce an altitude histogram, a speed "
+         "profile and a statistics table giving the minimum, maximum and mean of each parameter.",
+         "Analytics Page"),
+        ("7.7  Mission Control Page",
+         "The mission-control page lists active sorties with their objectives, phase and progress, "
+         "and presents a timeline of the standard phases of a flight-test sortie.",
+         "Mission Control Page"),
+        ("7.8  Alert Feed Page",
+         "The alert-feed page lists all generated alerts, classified by severity and time-stamped, "
+         "with critical alerts visually distinguished from cautions.",
+         "Alert Feed Page"),
+        ("7.9  Admin Panel Page",
+         "The administration page allows aircraft to be registered or removed and exposes settings "
+         "such as the refresh rate and the alert threshold.",
+         "Admin Panel Page"),
+    ]
+    for title, desc, label in pages:
+        h2(title)
+        p(desc)
+        screenshot_placeholder(f"Screenshot: {label}")
+        figcap(f"{label} of the Advanced Live Aircraft Tracking System")
 
 def n8_sourcecode():
     h1("CHAPTER 8   SOURCE CODE")
