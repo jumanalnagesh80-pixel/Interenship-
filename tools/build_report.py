@@ -433,20 +433,20 @@ def abstract_page():
 # TABLE OF CONTENTS  (static, page numbers approximate)
 # ======================================================================
 TOC_ENTRIES = [
-    ("1",  "Introduction of the Company", "1"),
-    ("2",  "Overview of Internship Activities", "2-4"),
-    ("3",  "System Requirements", "5-6"),
-    ("4",  "Tools Covered", "7-10"),
-    ("5",  "Technologies Used", "11-19"),
-    ("6",  "Learning Methods", "20-25"),
-    ("7",  "Development Pages During Internship", "26-28"),
-    ("8",  "Source Code", "29-32"),
-    ("9",  "Database", "33"),
-    ("10", "Benefits of Internship", "34"),
-    ("11", "Job Opportunities", "35"),
-    ("12", "Objectives", "36-37"),
-    ("13", "Conclusion", "38-39"),
-    ("14", "Bibliography", "40-41"),
+    ("1",  "Introduction of the Company", "1-4"),
+    ("2",  "Overview of Internship Activities", "5-8"),
+    ("3",  "System Requirements", "9-11"),
+    ("4",  "Tools Covered", "12-16"),
+    ("5",  "Technologies Used", "17-25"),
+    ("6",  "Learning Methods", "26-31"),
+    ("7",  "Development Pages During Internship", "32-37"),
+    ("8",  "Source Code", "38-42"),
+    ("9",  "Database", "43-44"),
+    ("10", "Benefits of Internship", "45"),
+    ("11", "Job Opportunities", "46"),
+    ("12", "Objectives", "47-48"),
+    ("13", "Conclusion", "49"),
+    ("14", "Bibliography", "50"),
 ]
 
 def _index_cell(text, w, align="center", bold=False, size=13, header=False):
@@ -1969,6 +1969,41 @@ def n1_company():
       "be acquired, processed, analysed and visualised before any engineering conclusion can be "
       "drawn. Understanding this activity, and building a software tool that demonstrates its "
       "real-time monitoring and visualisation, formed the core of the internship.")
+    h2("1.6  Historical Background of HAL")
+    p("The origins of HAL trace back to the establishment of an aircraft manufacturing company in "
+      "Bengaluru in 1940, which was later taken over and expanded by the Government of India. "
+      "Through a series of mergers and reorganisations, the modern Hindustan Aeronautics Limited "
+      "came into being and grew into a national centre of aerospace excellence. From the licensed "
+      "production of aircraft in its early years, HAL progressively developed indigenous design "
+      "capability, culminating in the creation of fully home-grown aircraft and helicopters. This "
+      "journey mirrors the nation's aspiration for self-reliance in defence technology.")
+    h2("1.7  Major Products of HAL")
+    p("HAL produces a wide spectrum of aerospace products spanning fixed-wing aircraft, "
+      "helicopters, engines, avionics and accessories. The major categories are summarised below.",
+      indent=False)
+    tabcap("Representative products of HAL")
+    table([
+        ["Category", "Representative Products"],
+        ["Fixed-wing aircraft", "Tejas Light Combat Aircraft, HTT-40 trainer, HJT-36 Sitara"],
+        ["Helicopters", "ALH Dhruv, Light Combat Helicopter Prachand, Light Utility Helicopter"],
+        ["Engines", "Indigenous and licence-produced aero-engines"],
+        ["Avionics & systems", "Navigation, communication, mission and display systems"],
+    ], widths=[3000, 6360])
+    h2("1.8  Achievements and National Importance")
+    p("HAL has achieved several milestones that underline its national importance. It has "
+      "indigenously designed and flight-tested fighter aircraft and helicopters, supported every "
+      "major operation of the Indian armed forces with maintenance and overhaul services, and "
+      "contributed to the national space programme through the manufacture of structures and "
+      "systems for launch vehicles. These achievements have established HAL as a cornerstone of the "
+      "nation's strategic capability and a symbol of indigenous technological strength.")
+    h2("1.9  Mission and Vision")
+    p("The mission of HAL is to become a globally competitive aerospace and defence organisation by "
+      "achieving self-reliance in the design, development and manufacture of aircraft and related "
+      "systems. Its vision emphasises indigenous capability, technological excellence and customer "
+      "satisfaction. Looking ahead, HAL continues to invest in next-generation platforms, unmanned "
+      "systems, advanced avionics and digital engineering, positioning itself for the future of "
+      "aerospace. It was within this forward-looking and disciplined environment that the present "
+      "internship was undertaken.")
 
 def n2_activities():
     h1("CHAPTER 2   OVERVIEW OF INTERNSHIP ACTIVITIES")
@@ -2021,6 +2056,20 @@ def n2_activities():
     p("Each module was tested as it was developed, and the integrated system was tested as a whole. "
       "Throughout the internship, the design decisions, the structure of the code and the results "
       "obtained were documented, and this documentation forms the basis of the present report.")
+    h2("2.8  Skills Applied during the Activities")
+    p("Each activity called upon and strengthened a particular set of skills. The observation phase "
+      "developed attentiveness and the ability to understand a complex working environment quickly. "
+      "Requirement analysis exercised analytical thinking and clear communication. Interface design "
+      "drew on creativity and an understanding of usability, while implementation demanded "
+      "programming proficiency and logical reasoning. Testing required patience and rigour, and "
+      "documentation called for clarity in technical writing. Together these activities provided a "
+      "rounded experience of the complete software-development process.")
+    h2("2.9  Coordination and Professional Conduct")
+    p("Throughout the internship, regular interaction with the mentor and observation of the wider "
+      "team instilled an appreciation of professional conduct. Punctuality, respect for safety "
+      "protocols, careful handling of information and a willingness to learn were as important as "
+      "technical ability. These aspects of professional behaviour, absorbed gradually over the "
+      "course of the internship, are among its most lasting benefits.")
 
 def n3_requirements():
     h1("CHAPTER 3   SYSTEM REQUIREMENTS")
@@ -2059,6 +2108,23 @@ def n3_requirements():
     p("The system was developed using a lightweight development environment consisting of a modern "
       "code editor and a web browser with developer tools. No compilation step or complex build "
       "pipeline was required, which allowed rapid iteration during development.")
+    h2("3.6  Functional Requirements")
+    p("The functional requirements describe what the system must do. These were established during "
+      "requirement analysis and guided the implementation.", indent=False)
+    bullet("Authenticate the operator before granting access to the monitoring functions.")
+    bullet("Simulate and process the telemetry of multiple aircraft in real time.")
+    bullet("Display aircraft positions on a live map and on a radar scope.")
+    bullet("Raise and record alerts when monitored parameters cross defined thresholds.")
+    bullet("Produce statistical summaries and charts from the processed telemetry.")
+    bullet("Allow aircraft to be registered or removed and settings to be configured.")
+    h2("3.7  Non-Functional Requirements")
+    p("The non-functional requirements describe the qualities the system must possess.",
+      indent=False)
+    bullet("Usability \u2014 a clear, professional and intuitive interface.")
+    bullet("Performance \u2014 smooth, responsive updates of the visualisations.")
+    bullet("Portability \u2014 operation in any modern browser on any operating system.")
+    bullet("Maintainability \u2014 clean, modular and well-documented code.")
+    bullet("Reliability \u2014 consistent and correct processing of the telemetry.")
 
 def n4_tools():
     h1("CHAPTER 4   TOOLS COVERED")
@@ -2109,6 +2175,29 @@ def n4_tools():
       "processing it and visualising it on a Canvas map. It was then expanded into the advanced "
       "system, which adds authentication, a full dashboard, a radar scope, analytics, mission "
       "control, an alert feed and an administration panel.")
+    h2("4.8  File and Folder Organisation")
+    p("Good organisation of files and folders is an often-overlooked but important tool of "
+      "development. The project was arranged so that the application files, the report and the "
+      "supporting scripts each occupied a clear location. A logical structure makes a project "
+      "easier to navigate, to maintain and to hand over, and learning to organise work in this way "
+      "is part of professional discipline.")
+    h2("4.9  The Browser Console as a Testing Aid")
+    p("The browser console served as a simple but effective testing aid throughout development. By "
+      "printing intermediate values and observing messages, it was possible to confirm that the "
+      "processing logic behaved as intended and to locate the source of errors quickly. This "
+      "lightweight approach to testing complemented the more structured testing carried out on the "
+      "completed modules.")
+    h2("4.10  Summary of Tools")
+    tabcap("Summary of tools used during the internship")
+    table([
+        ["Tool", "Purpose"],
+        ["Visual Studio Code", "Writing and editing the source code"],
+        ["Web Browser", "Running and demonstrating the application"],
+        ["Browser Developer Tools", "Inspecting, styling and debugging"],
+        ["Git", "Version control of the source code"],
+        ["HTML Canvas", "Programmatic graphical drawing"],
+        ["Diagramming / wireframes", "Planning the layout and architecture"],
+    ], widths=[3200, 6160])
 
 def n5_technologies():
     h1("CHAPTER 5   TECHNOLOGIES USED")
@@ -2192,7 +2281,27 @@ def n5_technologies():
       "performance indicators, the live map, the data tables and the alert feed at regular "
       "intervals, giving the user an immediate, at-a-glance understanding of the situation. This is "
       "precisely the kind of situational awareness required at a flight testing centre.")
-    h2("5.10  Summary of Technologies")
+    h2("5.10  Data Structures and JSON")
+    p("Data within the application is organised using JavaScript objects and arrays, a structure "
+      "that closely resembles the JavaScript Object Notation, or JSON, widely used for exchanging "
+      "data between systems. Representing each aircraft as an object with named properties makes "
+      "the data self-describing and easy to process, and it mirrors the way real systems exchange "
+      "structured telemetry. Understanding these data structures was essential to designing a clean "
+      "and efficient processing pipeline.")
+    h2("5.11  Performance Considerations")
+    p("Because the application redraws its visualisations many times per second, performance was an "
+      "important consideration. The rendering functions were written to be efficient, clearing and "
+      "redrawing only what is necessary, and the processing logic avoids unnecessary computation. "
+      "Choosing an appropriate refresh rate balances the smoothness of the animation against the "
+      "load placed on the browser, ensuring that the interface remains responsive even while "
+      "processing the telemetry of several aircraft.")
+    h2("5.12  Standards and Portability")
+    p("The system relies only on open, standardised web technologies defined by the World Wide Web "
+      "Consortium and ECMA International. Building on these standards rather than on proprietary "
+      "frameworks ensures that the application is portable, durable and free of external "
+      "dependencies. It will continue to run in any standards-compliant browser without "
+      "modification, which is a significant practical and educational advantage.")
+    h2("5.13  Summary of Technologies")
     tabcap("Summary of technologies and their roles")
     table([
         ["Technology", "Role in the Project"],
@@ -2251,7 +2360,19 @@ def n6_learning():
       "its own right. Explaining the design and the code in writing forced a clearer understanding "
       "of them, and the discipline of producing professional documentation taught the importance "
       "of communicating technical work effectively.")
-    h2("6.9  Summary")
+    h2("6.9  Learning from Mistakes")
+    p("Mistakes, far from being merely setbacks, were an important source of learning. Each error "
+      "in logic or design, once understood and corrected, left a lasting lesson that pure success "
+      "could not have provided. Adopting a calm and analytical attitude towards mistakes "
+      "transformed them into opportunities for growth and built the resilience that engineering "
+      "work requires.")
+    h2("6.10  Time Management and Planning")
+    p("Working within the fixed duration of the internship taught the value of planning and time "
+      "management. Breaking the project into manageable tasks, setting informal milestones and "
+      "maintaining steady progress ensured that the work was completed in good time. This "
+      "disciplined approach to managing one's own work is a skill that will be valuable in any "
+      "professional setting.")
+    h2("6.11  Summary")
     tabcap("Summary of learning methods")
     table([
         ["Method", "Contribution"],
@@ -2393,6 +2514,46 @@ def n8_sourcecode():
       "at run time from the administration panel, after which the timer is reset to the new "
       "interval. Together these elements show how a real-time monitoring application can be built "
       "entirely with standard web technologies.")
+    h2("8.8  Processing Fleet Statistics")
+    p("The analytics module computes summary statistics for the whole fleet. Using the array "
+      "reduce method, the average of a parameter such as altitude or speed is obtained in a single "
+      "concise expression, while the minimum and maximum are found with the corresponding helper "
+      "functions. This demonstrates how higher-order array methods make data processing both "
+      "compact and readable.")
+    code_block([
+        "const avg = key =>",
+        "  aircraft.reduce((sum,a)=>sum+a[key],0) / aircraft.length;",
+        "const maxAlt = Math.max(...aircraft.map(a=>a.alt));",
+        "const minAlt = Math.min(...aircraft.map(a=>a.alt));",
+    ])
+    h2("8.9  Generating and Storing Alerts")
+    p("Alerts are generated whenever a monitored parameter crosses a threshold. Each alert is "
+      "represented as an object carrying its severity, message and time, and is added to the front "
+      "of an alert array so that the most recent alert appears first. The array is capped at a "
+      "reasonable length so that memory use remains bounded during long sessions.")
+    code_block([
+        "function pushAlert(level, message){",
+        "  alerts.unshift({level, message, t: new Date().toLocaleTimeString()});",
+        "  if(alerts.length > 40) alerts.pop();   // keep the list bounded",
+        "}",
+    ])
+    h2("8.10  Rendering Data Tables")
+    p("The fleet and tracking tables are produced by mapping the aircraft array to rows of markup "
+      "and writing the result into the document. This declarative style, in which the display is "
+      "derived directly from the data, keeps the interface consistent with the underlying state "
+      "and is a hallmark of clean front-end design.")
+    code_block([
+        "rows.innerHTML = aircraft.map(a => `",
+        "  <tr><td>${a.cs}</td><td>${a.type}</td>",
+        "      <td>${Math.round(a.alt)}</td><td>${badge(a.status)}</td></tr>",
+        "`).join('');",
+    ])
+    h2("8.11  Coding Style and Maintainability")
+    p("Throughout the source code, meaningful names, small single-purpose functions and consistent "
+      "formatting were used to keep the program readable and maintainable. The clear separation of "
+      "the data model, the processing logic, the rendering functions and the event handlers means "
+      "that any part of the system can be understood and modified in isolation, which reflects "
+      "sound software-engineering practice.")
 
 def n9_database():
     h1("CHAPTER 9   DATABASE")
@@ -2419,6 +2580,32 @@ def n9_database():
     p("The AIRCRAFT table is the central table; each row in the TELEMETRY and ALERT tables "
       "references an aircraft through a foreign key, preserving referential integrity and allowing "
       "the data to be queried efficiently.")
+    h2("9.4  Entity-Relationship Overview")
+    p("The relationships between the entities can be visualised as an entity-relationship diagram. "
+      "The AIRCRAFT entity sits at the centre, linked by one-to-many relationships to TELEMETRY and "
+      "ALERT, while SORTIE references the aircraft assigned to it and USER oversees the sorties.",
+      indent=False)
+    diagram_layers([
+        ("Entities and Relationships",
+         ["USER", "SORTIE", "AIRCRAFT", "TELEMETRY", "ALERT"]),
+    ])
+    figcap("Entity-relationship overview of the data model")
+    h2("9.5  Sample Data")
+    tabcap("Sample AIRCRAFT records")
+    table([
+        ["aircraft_id", "callsign", "type", "status"],
+        ["1", "HAL-LCH1", "LCH Prachand", "normal"],
+        ["2", "HAL-ALH2", "ALH Dhruv", "normal"],
+        ["3", "HAL-TEJ4", "Tejas LCA", "normal"],
+        ["4", "HAL-HTT5", "HTT-40", "caution"],
+    ], widths=[2200, 2400, 2960, 1800])
+    h2("9.6  Normalisation and Integrity")
+    p("The data model follows the principles of normalisation, with each entity holding only the "
+      "attributes that belong to it and relationships expressed through foreign keys rather than "
+      "duplicated data. This avoids redundancy, prevents inconsistency and makes the database "
+      "easier to maintain. Although the demonstration system keeps its data in memory, designing it "
+      "around a normalised relational model means that it could be extended to persistent storage "
+      "in a straightforward manner.")
 
 def n10_benefits():
     h1("CHAPTER 10   BENEFITS OF INTERNSHIP")
@@ -2504,6 +2691,13 @@ def n12_objectives():
       "telemetry within a browser-based application. It demonstrates the monitoring and "
       "visualisation stages of the flight-data-processing workflow on a safe and reduced scale, and "
       "it is designed so that it can be extended in future to work with real telemetry sources.")
+    h2("12.6  Significance of the Objectives")
+    p("Taken together, these objectives ensured that the internship delivered value on two levels. "
+      "On the personal level, they guided the development of technical and professional skills and "
+      "the acquisition of domain knowledge. On the practical level, they directed the creation of a "
+      "useful, working system that demonstrates real engineering concepts. Meeting these objectives "
+      "is the measure by which the internship can be judged a success, and the chapters of this "
+      "report provide the evidence that each of them was achieved.")
 
 def n13_conclusion():
     h1("CHAPTER 13   CONCLUSION")
