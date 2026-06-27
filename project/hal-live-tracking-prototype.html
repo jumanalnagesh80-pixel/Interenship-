@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HAL Live Tracking Prototype</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,Arial,sans-serif}
+  body{background:#0b1220;color:#e6f1ff;padding:18px}
+  h1{font-size:18px;color:#00e0ff;margin-bottom:2px}
+  p.s{color:#8aa0b6;font-size:12px;margin-bottom:16px}
+  .wrap{display:grid;grid-template-columns:1fr 320px;gap:16px}
+  .card{background:#111827;border:1px solid #1e2a3d;border-radius:12px;padding:14px;margin-bottom:14px}
+  h3{font-size:13px;margin-bottom:10px}
+  canvas{width:100%;background:#06101c;border-radius:10px;display:block}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th,td{padding:8px;border-bottom:1px solid #1e2a3d;text-align:left}
+  th{color:#8aa0b6;font-size:11px;text-transform:uppercase}
+  .kpi{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #1e2a3d;font-size:13px}
+  .kpi b{color:#00e0ff}
+  .badge{padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+  .ok{background:rgba(34,197,94,.15);color:#22c55e}
+  .warn{background:rgba(245,158,11,.15);color:#f59e0b}
+  @media(max-width:800px){.wrap{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <h1>HAL Live Tracking Prototype</h1>
+  <p class="s">Early proof-of-concept · Flight Testing Centre · single-screen Canvas tracker</p>
+  <div class="wrap">
+    <div>
+      <div class="card"><h3>Airspace Map</h3><canvas id="m" height="360"></canvas></div>
+      <div class="card"><h3>Tracked Aircraft</h3>
+        <table><thead><tr><th>Callsign</th><th>Alt (ft)</th><th>Spd (kts)</th><th>Status</th></tr></thead>
+        <tbody id="rows"></tbody></table></div>
+    </div>
+    <div>
+      <div class="card"><h3>Live Summary</h3>
+        <div class="kpi"><span>Aircraft tracked</span><b id="n">0</b></div>
+        <div class="kpi"><span>Average altitude</span><b id="a">0</b></div>
+        <div class="kpi"><span>Average speed</span><b id="sp">0</b></div>
+        <div class="kpi"><span>Last update</span><b id="t">—</b></div>
+      </div>
+      <div class="card"><h3>About</h3>
+        <p class="s">This prototype demonstrates the core idea of the project: periodically sample
+        aircraft telemetry, process it in the browser, and visualise positions on a Canvas map with a
+        live data table. It was later expanded into the Advanced Live Aircraft Tracking System.</p>
+      </div>
+    </div>
+  </div>
+<script>
+let ac=[
+ {cs:"HAL-ALH1",lat:120,lon:90,alt:9800,spd:140,hdg:90},
+ {cs:"HAL-LCH2",lat:240,lon:200,alt:14200,spd:165,hdg:160},
+ {cs:"HAL-TEJ3",lat:80,lon:300,alt:31000,spd:470,hdg:40},
+ {cs:"HAL-LUH4",lat:320,lon:120,alt:6200,spd:120,hdg:240},
+];
+const c=document.getElementById('m'),x=c.getContext('2d');
+function col(a){return a.alt>30000?'#f59e0b':'#22c55e';}
+function step(){
+  ac.forEach(a=>{const r=a.hdg*Math.PI/180;a.lat+=Math.cos(r)*1.3;a.lon+=Math.sin(r)*1.3;
+    if(a.lat<8)a.lat=352;if(a.lat>352)a.lat=8;if(a.lon<8)a.lon=352;if(a.lon>352)a.lon=8;
+    a.alt+=(Math.random()-.5)*150;a.spd+=(Math.random()-.5)*6;});
+  draw();table();summary();
+}
+function draw(){c.width=c.clientWidth;x.clearRect(0,0,c.width,c.height);
+  const sx=c.width/360,sy=c.height/360;x.strokeStyle='#15324a';
+  for(let i=0;i<=360;i+=36){x.beginPath();x.moveTo(i*sx,0);x.lineTo(i*sx,c.height);x.stroke();
+    x.beginPath();x.moveTo(0,i*sy);x.lineTo(c.width,i*sy);x.stroke();}
+  ac.forEach(a=>{const px=a.lon*sx,py=a.lat*sy;x.fillStyle=col(a);
+    x.beginPath();x.arc(px,py,5,0,7);x.fill();
+    x.fillStyle='#e6f1ff';x.font='10px Segoe UI';x.fillText(a.cs,px+8,py-4);});
+}
+function table(){document.getElementById('rows').innerHTML=ac.map(a=>
+  `<tr><td>${a.cs}</td><td>${Math.round(a.alt).toLocaleString()}</td><td>${Math.round(a.spd)}</td>
+   <td><span class="badge ${a.alt>30000?'warn':'ok'}">${a.alt>30000?'HIGH ALT':'NORMAL'}</span></td></tr>`).join('');}
+function summary(){document.getElementById('n').textContent=ac.length;
+  document.getElementById('a').textContent=Math.round(ac.reduce((s,a)=>s+a.alt,0)/ac.length).toLocaleString()+' ft';
+  document.getElementById('sp').textContent=Math.round(ac.reduce((s,a)=>s+a.spd,0)/ac.length)+' kts';
+  document.getElementById('t').textContent=new Date().toLocaleTimeString('en-GB');}
+draw();table();summary();setInterval(step,1500);
+window.addEventListener('resize',draw);
+</script>
+</body>
+</html>

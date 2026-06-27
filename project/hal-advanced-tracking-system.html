@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HAL Advanced Live Aircraft Tracking System</title>
+<style>
+  :root{
+    --bg:#0a0e1a; --panel:#111827; --panel2:#0f1626; --accent:#00e0ff;
+    --accent2:#ffb703; --ok:#22c55e; --warn:#f59e0b; --crit:#ef4444;
+    --grid:#15324a; --text:#e6f1ff; --muted:#8aa0b6; --line:#1e2a3d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",Roboto,Arial,sans-serif}
+  body{background:var(--bg);color:var(--text);overflow-x:hidden}
+  /* ---------- Login ---------- */
+  #login{position:fixed;inset:0;background:radial-gradient(circle at 50% 30%,#0d1b2a,#05070d);
+    display:flex;align-items:center;justify-content:center;z-index:1000}
+  .login-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:34px 38px;width:360px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+  .login-card h1{font-size:20px;color:var(--accent);text-align:center;margin-bottom:4px;letter-spacing:1px}
+  .login-card p{text-align:center;color:var(--muted);font-size:12px;margin-bottom:22px}
+  .login-card label{font-size:12px;color:var(--muted);display:block;margin:12px 0 5px}
+  .login-card input{width:100%;padding:11px;border-radius:8px;border:1px solid var(--line);
+    background:var(--panel2);color:var(--text);font-size:14px}
+  .login-card button{width:100%;margin-top:20px;padding:12px;border:none;border-radius:8px;
+    background:linear-gradient(90deg,var(--accent),#0096c7);color:#01121a;font-weight:700;
+    font-size:14px;cursor:pointer;letter-spacing:.5px}
+  .hint{margin-top:14px;font-size:11px;color:var(--muted);text-align:center}
+  /* ---------- Layout ---------- */
+  header.topbar{display:flex;align-items:center;gap:14px;padding:12px 20px;background:var(--panel);
+    border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+  .logo{width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#0077b6);
+    display:flex;align-items:center;justify-content:center;font-weight:800;color:#01121a;font-size:15px}
+  .brand b{font-size:15px;letter-spacing:.5px}
+  .brand span{display:block;font-size:11px;color:var(--muted)}
+  .clock{margin-left:auto;text-align:right;font-size:13px}
+  .clock small{color:var(--muted);font-size:11px}
+  .user-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--panel2);
+    border:1px solid var(--line);border-radius:30px;font-size:12px}
+  .logout{cursor:pointer;color:var(--crit);font-size:12px;border:1px solid var(--line);
+    padding:6px 12px;border-radius:8px;background:var(--panel2)}
+  .shell{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 63px)}
+  nav.side{background:var(--panel);border-right:1px solid var(--line);padding:14px 10px}
+  nav.side a{display:flex;align-items:center;gap:10px;padding:11px 14px;color:var(--muted);
+    text-decoration:none;border-radius:9px;font-size:13px;margin-bottom:3px;cursor:pointer}
+  nav.side a.active,nav.side a:hover{background:var(--panel2);color:var(--accent)}
+  nav.side a .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+  main{padding:22px}
+  .page{display:none}.page.active{display:block;animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  h2.title{font-size:18px;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:12px;margin-bottom:18px}
+  /* ---------- Cards / KPIs ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .kpi .v{font-size:26px;font-weight:700}
+  .kpi .l{font-size:12px;color:var(--muted);margin-top:2px}
+  .kpi .t{font-size:11px;margin-top:6px}
+  .grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+  .card h3{font-size:14px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .card h3 .pill{margin-left:auto;font-size:10px;background:var(--panel2);padding:3px 9px;
+    border-radius:20px;color:var(--muted)}
+  canvas{display:block;width:100%;border-radius:10px;background:#06101c}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+  tr{cursor:pointer}tr:hover td{background:var(--panel2)}
+  .badge{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
+  .b-ok{background:rgba(34,197,94,.15);color:var(--ok)}
+  .b-warn{background:rgba(245,158,11,.15);color:var(--warn)}
+  .b-crit{background:rgba(239,68,68,.15);color:var(--crit)}
+  .alert{display:flex;gap:10px;padding:10px 12px;border-radius:9px;background:var(--panel2);
+    margin-bottom:8px;font-size:12px;border-left:3px solid var(--accent)}
+  .alert.warn{border-color:var(--warn)} .alert.crit{border-color:var(--crit)}
+  .alert .time{margin-left:auto;color:var(--muted);font-size:11px}
+  .bars{display:flex;align-items:flex-end;gap:8px;height:140px}
+  .bar{flex:1;background:linear-gradient(180deg,var(--accent),#0077b6);border-radius:6px 6px 0 0;position:relative}
+  .bar span{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:10px;color:var(--muted)}
+  .detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;font-size:12px}
+  .detail-grid div{background:var(--panel2);padding:10px;border-radius:8px}
+  .detail-grid b{color:var(--accent);display:block;font-size:11px;margin-bottom:2px;font-weight:600}
+  .toolbar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+  .toolbar input,.toolbar select{padding:9px 12px;background:var(--panel);border:1px solid var(--line);
+    border-radius:8px;color:var(--text);font-size:12px}
+  .btn{padding:9px 14px;border:1px solid var(--line);background:var(--panel);color:var(--text);
+    border-radius:8px;font-size:12px;cursor:pointer}
+  .btn.acc{background:var(--accent);color:#01121a;border-color:var(--accent);font-weight:700}
+  .legend{display:flex;gap:14px;font-size:11px;color:var(--muted);margin-top:8px}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}
+  @media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.shell{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="login">
+  <div class="login-card">
+    <h1>HAL FLIGHT TESTING CENTRE</h1>
+    <p>Advanced Live Aircraft Tracking System</p>
+    <label>User ID</label>
+    <input id="u" value="ftc.operator" />
+    <label>Password</label>
+    <input id="p" type="password" value="hal@2026" />
+    <button onclick="doLogin()">SECURE LOGIN</button>
+    <div class="hint">Demo credentials are pre-filled · Rotary Wing R&D Centre</div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" style="display:none">
+  <header class="topbar">
+    <div class="logo">HAL</div>
+    <div class="brand"><b>Live Aircraft Tracking System</b>
+      <span>Flight Testing Centre · RWR&DC · Bengaluru</span></div>
+    <div class="clock" id="clock"></div>
+    <div class="user-chip"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block"></span> ftc.operator</div>
+    <div class="logout" onclick="logout()">Logout</div>
+  </header>
+
+  <div class="shell">
+    <nav class="side" id="nav">
+      <a data-p="dashboard" class="active"><span class="dot"></span> Dashboard</a>
+      <a data-p="tracking"><span class="dot"></span> Live Tracking</a>
+      <a data-p="radar"><span class="dot"></span> Radar Scope</a>
+      <a data-p="analytics"><span class="dot"></span> Analytics</a>
+      <a data-p="mission"><span class="dot"></span> Mission Control</a>
+      <a data-p="alerts"><span class="dot"></span> Alert Feed</a>
+      <a data-p="admin"><span class="dot"></span> Admin Panel</a>
+    </nav>
+
+    <main>
+      <!-- DASHBOARD -->
+      <section class="page active" id="dashboard">
+        <h2 class="title">Operations Dashboard</h2>
+        <div class="sub">Real-time overview of all aircraft under test and surveillance</div>
+        <div class="kpis">
+          <div class="kpi"><div class="v" id="k-active" style="color:var(--ok)">0</div><div class="l">Aircraft Airborne</div><div class="t" style="color:var(--ok)">tracking live</div></div>
+          <div class="kpi"><div class="v" id="k-alt">0</div><div class="l">Avg Altitude (ft)</div><div class="t" style="color:var(--muted)">across fleet</div></div>
+          <div class="kpi"><div class="v" id="k-spd">0</div><div class="l">Avg Speed (kts)</div><div class="t" style="color:var(--muted)">ground speed</div></div>
+          <div class="kpi"><div class="v" id="k-alert" style="color:var(--warn)">0</div><div class="l">Active Alerts</div><div class="t" style="color:var(--warn)">requires attention</div></div>
+        </div>
+        <div class="grid2">
+          <div class="card">
+            <h3>Live Aircraft Map <span class="pill">simulated airspace</span></h3>
+            <canvas id="map" height="380"></canvas>
+            <div class="legend">
+              <span><i style="background:var(--ok)"></i>Normal</span>
+              <span><i style="background:var(--warn)"></i>Caution</span>
+              <span><i style="background:var(--crit)"></i>Critical</span>
+              <span><i style="background:var(--accent)"></i>Test Aircraft</span>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Recent Alerts</h3>
+            <div id="dash-alerts"></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Fleet Status</h3>
+          <table><thead><tr><th>Callsign</th><th>Type</th><th>Altitude</th><th>Speed</th><th>Heading</th><th>Status</th></tr></thead>
+          <tbody id="fleet-rows"></tbody></table>
+        </div>
+      </section>
+
+      <!-- TRACKING -->
+      <section class="page" id="tracking">
+        <h2 class="title">Live Aircraft Tracking</h2>
+        <div class="sub">Select an aircraft to view live telemetry and flight parameters</div>
+        <div class="toolbar">
+          <input id="search" placeholder="Search callsign / type..." oninput="renderTracking()" />
+          <select id="filter" onchange="renderTracking()">
+            <option value="all">All Status</option><option value="ok">Normal</option>
+            <option value="warn">Caution</option><option value="crit">Critical</option>
+          </select>
+        </div>
+        <div class="grid2">
+          <div class="card"><h3>Tracked Aircraft</h3>
+            <table><thead><tr><th>Callsign</th><th>Type</th><th>Alt</th><th>Spd</th><th>Status</th></tr></thead>
+            <tbody id="track-rows"></tbody></table>
+          </div>
+          <div class="card"><h3>Aircraft Detail <span class="pill" id="det-cs">—</span></h3>
+            <div id="detail"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RADAR -->
+      <section class="page" id="radar">
+        <h2 class="title">Radar Scope</h2>
+        <div class="sub">Polar sweep display with range rings and live contacts</div>
+        <div class="card"><h3>Primary Surveillance Radar <span class="pill">range 120 NM</span></h3>
+          <canvas id="radarc" height="460"></canvas>
+        </div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section class="page" id="analytics">
+        <h2 class="title">Flight Data Analytics</h2>
+        <div class="sub">Processed flight test data and statistical summaries</div>
+        <div class="grid2">
+          <div class="card"><h3>Altitude Distribution (ft)</h3><div class="bars" id="bars-alt"></div></div>
+          <div class="card"><h3>Speed Profile (kts)</h3><canvas id="line" height="200"></canvas></div>
+        </div>
+        <div class="card"><h3>Data Processing Summary</h3>
+          <table><thead><tr><th>Parameter</th><th>Samples</th><th>Min</th><th>Max</th><th>Mean</th></tr></thead>
+          <tbody id="stats-rows"></tbody></table>
+        </div>
+      </section>
+
+      <!-- MISSION -->
+      <section class="page" id="mission">
+        <h2 class="title">Mission Control</h2>
+        <div class="sub">Flight test mission planning and sortie management</div>
+        <div class="card"><h3>Active Sorties</h3>
+          <table><thead><tr><th>Sortie</th><th>Aircraft</th><th>Objective</th><th>Phase</th><th>Progress</th></tr></thead>
+          <tbody id="mission-rows"></tbody></table>
+        </div>
+        <div class="card"><h3>Mission Timeline</h3><canvas id="timeline" height="160"></canvas></div>
+      </section>
+
+      <!-- ALERTS -->
+      <section class="page" id="alerts">
+        <h2 class="title">Alert Feed</h2>
+        <div class="sub">System-generated alerts from telemetry threshold monitoring</div>
+        <div class="card"><h3>All Alerts</h3><div id="all-alerts"></div></div>
+      </section>
+
+      <!-- ADMIN -->
+      <section class="page" id="admin">
+        <h2 class="title">Admin Panel</h2>
+        <div class="sub">System configuration and aircraft registry management</div>
+        <div class="card"><h3>Register New Aircraft</h3>
+          <div class="toolbar">
+            <input id="a-cs" placeholder="Callsign e.g. HAL-LCH" />
+            <input id="a-type" placeholder="Type e.g. LCH Prachand" />
+            <input id="a-alt" placeholder="Altitude ft" type="number" />
+            <input id="a-spd" placeholder="Speed kts" type="number" />
+            <button class="btn acc" onclick="addAircraft()">Add Aircraft</button>
+          </div>
+        </div>
+        <div class="card"><h3>Aircraft Registry</h3>
+          <table><thead><tr><th>Callsign</th><th>Type</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="reg-rows"></tbody></table>
+        </div>
+        <div class="card"><h3>System Settings</h3>
+          <div class="toolbar">
+            <label style="font-size:12px;color:var(--muted)">Refresh rate (s)
+              <input id="rate" type="number" value="2" style="width:70px;margin-left:8px" onchange="setRate()"/></label>
+            <label style="font-size:12px;color:var(--muted)">Alert threshold altitude (ft)
+              <input id="thr" type="number" value="35000" style="width:110px;margin-left:8px"/></label>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   HAL Advanced Live Aircraft Tracking System
+   Frontend prototype — HTML5 / CSS3 / Vanilla JavaScript / Canvas
+   Developed during internship at HAL Flight Testing Centre, RWR&DC
+   ============================================================ */
+
+// ---------- Aircraft data model ----------
+let aircraft = [
+  {cs:"HAL-LCH1", type:"LCH Prachand", lat:120, lon:90, alt:14200, spd:165, hdg:90,  status:"ok"},
+  {cs:"HAL-ALH2", type:"ALH Dhruv",    lat:200, lon:160,alt:9800,  spd:140, hdg:135, status:"ok"},
+  {cs:"HAL-LUH3", type:"LUH",          lat:300, lon:240,alt:6400,  spd:120, hdg:200, status:"warn"},
+  {cs:"HAL-TEJ4", type:"Tejas LCA",    lat:160, lon:300,alt:32000, spd:480, hdg:45,  status:"ok"},
+  {cs:"HAL-HTT5", type:"HTT-40",       lat:380, lon:120,alt:8200,  spd:180, hdg:300, status:"crit"},
+  {cs:"HAL-IJT6", type:"HJT-36 Sitara",lat:90,  lon:340,alt:21000, spd:340, hdg:160, status:"ok"},
+];
+let alerts = [];
+let selected = null;
+let refreshRate = 2000;
+const THR = ()=>+document.getElementById('thr').value||35000;
+
+// ---------- Auth ----------
+function doLogin(){
+  const u=document.getElementById('u').value, p=document.getElementById('p').value;
+  if(u && p){
+    document.getElementById('login').style.display='none';
+    document.getElementById('app').style.display='block';
+    boot();
+  }
+}
+function logout(){ location.reload(); }
+
+// ---------- Navigation ----------
+document.getElementById('nav').addEventListener('click',e=>{
+  const a=e.target.closest('a'); if(!a)return;
+  document.querySelectorAll('nav.side a').forEach(x=>x.classList.remove('active'));
+  a.classList.add('active');
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById(a.dataset.p).classList.add('active');
+});
+
+// ---------- Clock ----------
+function tick(){
+  const d=new Date();
+  document.getElementById('clock').innerHTML =
+    d.toLocaleTimeString('en-GB')+' IST<br><small>'+d.toDateString()+'</small>';
+}
+
+// ---------- Simulation step ----------
+function simulate(){
+  aircraft.forEach(a=>{
+    const rad=a.hdg*Math.PI/180;
+    a.lat += Math.cos(rad)*(a.spd/120);
+    a.lon += Math.sin(rad)*(a.spd/120);
+    // wrap within map bounds
+    if(a.lat<10)a.lat=470; if(a.lat>470)a.lat=10;
+    if(a.lon<10)a.lon=470; if(a.lon>470)a.lon=10;
+    a.alt += (Math.random()-0.5)*200;
+    a.spd += (Math.random()-0.5)*8;
+    // status from thresholds
+    if(a.alt>THR()) a.status='crit';
+    else if(a.spd>420||a.alt<5000) a.status='warn';
+    else a.status='ok';
+  });
+  // occasional alert
+  aircraft.forEach(a=>{
+    if(a.status==='crit' && Math.random()<0.15) pushAlert('crit',a.cs+' exceeded altitude threshold ('+Math.round(a.alt)+' ft)');
+    else if(a.status==='warn' && Math.random()<0.08) pushAlert('warn',a.cs+' caution: parameter deviation detected');
+  });
+  renderAll();
+}
+function pushAlert(level,msg){
+  alerts.unshift({level,msg,t:new Date().toLocaleTimeString('en-GB')});
+  if(alerts.length>40) alerts.pop();
+}
+
+// ---------- Renderers ----------
+function renderAll(){
+  renderKPIs(); drawMap(); renderFleet(); renderDashAlerts();
+  renderTracking(); drawRadar(); renderAnalytics(); renderMission();
+  renderAllAlerts(); renderRegistry();
+}
+function renderKPIs(){
+  document.getElementById('k-active').textContent=aircraft.length;
+  document.getElementById('k-alt').textContent=Math.round(avg('alt')).toLocaleString();
+  document.getElementById('k-spd').textContent=Math.round(avg('spd'));
+  document.getElementById('k-alert').textContent=alerts.filter(a=>a.level==='crit').length;
+}
+const avg=k=>aircraft.reduce((s,a)=>s+a[k],0)/aircraft.length;
+const colOf=s=>s==='crit'?'#ef4444':s==='warn'?'#f59e0b':'#22c55e';
+const badge=s=>`<span class="badge b-${s==='crit'?'crit':s==='warn'?'warn':'ok'}">${s==='crit'?'CRITICAL':s==='warn'?'CAUTION':'NORMAL'}</span>`;
+
+function drawMap(){
+  const c=document.getElementById('map'); if(!c.width)c.width=c.clientWidth;
+  const x=c.getContext('2d'); x.clearRect(0,0,c.width,c.height);
+  const sx=c.width/480, sy=c.height/480;
+  // grid
+  x.strokeStyle='#15324a'; x.lineWidth=1;
+  for(let i=0;i<=480;i+=40){x.beginPath();x.moveTo(i*sx,0);x.lineTo(i*sx,c.height);x.stroke();
+    x.beginPath();x.moveTo(0,i*sy);x.lineTo(c.width,i*sy);x.stroke();}
+  // aircraft
+  aircraft.forEach(a=>{
+    const px=a.lon*sx, py=a.lat*sy;
+    x.save(); x.translate(px,py); x.rotate(a.hdg*Math.PI/180);
+    x.fillStyle=colOf(a.status);
+    x.beginPath();x.moveTo(0,-8);x.lineTo(6,8);x.lineTo(0,4);x.lineTo(-6,8);x.closePath();x.fill();
+    x.restore();
+    x.fillStyle='#e6f1ff';x.font='10px Segoe UI';x.fillText(a.cs,px+8,py-6);
+    x.fillStyle='#8aa0b6';x.fillText(Math.round(a.alt)+'ft',px+8,py+6);
+  });
+}
+function renderFleet(){
+  document.getElementById('fleet-rows').innerHTML=aircraft.map(a=>
+    `<tr onclick="selectAc('${a.cs}')"><td>${a.cs}</td><td>${a.type}</td>
+     <td>${Math.round(a.alt).toLocaleString()} ft</td><td>${Math.round(a.spd)} kts</td>
+     <td>${Math.round(a.hdg)}°</td><td>${badge(a.status)}</td></tr>`).join('');
+}
+function renderDashAlerts(){
+  const el=document.getElementById('dash-alerts');
+  el.innerHTML = alerts.slice(0,6).map(a=>
+    `<div class="alert ${a.level}"><span>${a.msg}</span><span class="time">${a.t}</span></div>`).join('')
+    || '<div class="sub">No alerts. All systems nominal.</div>';
+}
+function renderTracking(){
+  const q=(document.getElementById('search')?.value||'').toLowerCase();
+  const f=document.getElementById('filter')?.value||'all';
+  const rows=aircraft.filter(a=>(a.cs+a.type).toLowerCase().includes(q) && (f==='all'||a.status===f));
+  document.getElementById('track-rows').innerHTML=rows.map(a=>
+    `<tr onclick="selectAc('${a.cs}')"><td>${a.cs}</td><td>${a.type}</td>
+     <td>${Math.round(a.alt).toLocaleString()}</td><td>${Math.round(a.spd)}</td><td>${badge(a.status)}</td></tr>`).join('');
+  renderDetail();
+}
+function selectAc(cs){ selected=cs; renderDetail();
+  document.querySelectorAll('nav.side a').forEach(x=>x.classList.remove('active'));
+  document.querySelector('[data-p=tracking]').classList.add('active');
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById('tracking').classList.add('active');
+}
+function renderDetail(){
+  const a=aircraft.find(x=>x.cs===selected);
+  document.getElementById('det-cs').textContent=a?a.cs:'—';
+  document.getElementById('detail').innerHTML = a?`
+    <div class="detail-grid">
+      <div><b>Callsign</b>${a.cs}</div><div><b>Aircraft Type</b>${a.type}</div>
+      <div><b>Altitude</b>${Math.round(a.alt).toLocaleString()} ft</div>
+      <div><b>Ground Speed</b>${Math.round(a.spd)} kts</div>
+      <div><b>Heading</b>${Math.round(a.hdg)}°</div><div><b>Status</b>${badge(a.status)}</div>
+      <div><b>Latitude (sim)</b>${a.lat.toFixed(2)}</div><div><b>Longitude (sim)</b>${a.lon.toFixed(2)}</div>
+      <div><b>Vertical Rate</b>${Math.round((Math.random()-.5)*1200)} ft/min</div>
+      <div><b>Transponder</b>Mode-S Active</div>
+    </div>`:'<div class="sub">Select an aircraft from the list to view live telemetry.</div>';
+}
+
+function drawRadar(){
+  const c=document.getElementById('radarc'); if(!c.width)c.width=c.clientWidth;
+  const x=c.getContext('2d'),cx=c.width/2,cy=c.height/2,R=Math.min(cx,cy)-12;
+  x.clearRect(0,0,c.width,c.height);
+  x.strokeStyle='#15324a';
+  for(let r=R/4;r<=R;r+=R/4){x.beginPath();x.arc(cx,cy,r,0,7);x.stroke();}
+  x.beginPath();x.moveTo(cx-R,cy);x.lineTo(cx+R,cy);x.moveTo(cx,cy-R);x.lineTo(cx,cy+R);x.stroke();
+  // sweep
+  const t=(Date.now()/1000)%4/4*Math.PI*2;
+  const g=x.createRadialGradient(cx,cy,0,cx,cy,R);
+  g.addColorStop(0,'rgba(0,224,255,.35)');g.addColorStop(1,'rgba(0,224,255,0)');
+  x.fillStyle=g;x.beginPath();x.moveTo(cx,cy);x.arc(cx,cy,R,t-0.4,t);x.closePath();x.fill();
+  // contacts
+  aircraft.forEach(a=>{
+    const ang=a.hdg*Math.PI/180, dist=(a.alt/35000)*R*0.9;
+    const px=cx+Math.cos(ang)*dist, py=cy+Math.sin(ang)*dist;
+    x.fillStyle=colOf(a.status);x.beginPath();x.arc(px,py,4,0,7);x.fill();
+    x.fillStyle='#e6f1ff';x.font='9px Segoe UI';x.fillText(a.cs,px+6,py);
+  });
+}
+
+function renderAnalytics(){
+  // altitude histogram
+  const buckets=[0,0,0,0,0]; // <10k,10-20k,20-30k,30-40k,>40k
+  aircraft.forEach(a=>{const i=Math.min(4,Math.floor(a.alt/10000));buckets[i]++;});
+  const max=Math.max(...buckets,1);
+  document.getElementById('bars-alt').innerHTML=buckets.map((b,i)=>
+    `<div class="bar" style="height:${b/max*100}%"><span>${['0-10k','10-20k','20-30k','30-40k','40k+'][i]}</span></div>`).join('');
+  // speed line
+  const c=document.getElementById('line'); if(!c.width)c.width=c.clientWidth;
+  const x=c.getContext('2d');x.clearRect(0,0,c.width,c.height);
+  x.strokeStyle='#00e0ff';x.lineWidth=2;x.beginPath();
+  aircraft.forEach((a,i)=>{const px=i/(aircraft.length-1)*c.width;const py=c.height-(a.spd/500)*c.height;
+    i?x.lineTo(px,py):x.moveTo(px,py);});x.stroke();
+  // stats table
+  const params=[['Altitude','alt'],['Speed','spd'],['Heading','hdg']];
+  document.getElementById('stats-rows').innerHTML=params.map(([n,k])=>{
+    const vals=aircraft.map(a=>a[k]);
+    return `<tr><td>${n}</td><td>${vals.length*120}</td><td>${Math.round(Math.min(...vals))}</td>
+      <td>${Math.round(Math.max(...vals))}</td><td>${Math.round(vals.reduce((s,v)=>s+v,0)/vals.length)}</td></tr>`;
+  }).join('');
+}
+
+function renderMission(){
+  const sorties=[
+    {id:'S-101',ac:'HAL-LCH1',obj:'High-altitude hover trial',phase:'In Flight',prog:72},
+    {id:'S-102',ac:'HAL-TEJ4',obj:'Supersonic envelope expansion',phase:'In Flight',prog:55},
+    {id:'S-103',ac:'HAL-HTT5',obj:'Stall recovery evaluation',phase:'Caution',prog:40},
+    {id:'S-104',ac:'HAL-ALH2',obj:'Autorotation data capture',phase:'In Flight',prog:88},
+  ];
+  document.getElementById('mission-rows').innerHTML=sorties.map(s=>
+    `<tr><td>${s.id}</td><td>${s.ac}</td><td>${s.obj}</td><td>${s.phase}</td>
+     <td><div style="background:#0f1626;border-radius:6px;height:8px;overflow:hidden">
+     <div style="width:${s.prog}%;height:8px;background:linear-gradient(90deg,#00e0ff,#0077b6)"></div></div></td></tr>`).join('');
+  const c=document.getElementById('timeline'); if(!c.width)c.width=c.clientWidth;
+  const x=c.getContext('2d');x.clearRect(0,0,c.width,c.height);
+  ['Brief','Taxi','Takeoff','Test Points','Approach','Land','Debrief'].forEach((p,i)=>{
+    const px=20+i*((c.width-40)/6);
+    x.fillStyle=i<4?'#00e0ff':'#15324a';x.beginPath();x.arc(px,40,7,0,7);x.fill();
+    if(i<6){x.strokeStyle='#15324a';x.beginPath();x.moveTo(px,40);x.lineTo(px+((c.width-40)/6),40);x.stroke();}
+    x.fillStyle='#8aa0b6';x.font='10px Segoe UI';x.fillText(p,px-14,70);
+  });
+}
+function renderAllAlerts(){
+  document.getElementById('all-alerts').innerHTML=alerts.map(a=>
+    `<div class="alert ${a.level}"><span>${a.msg}</span><span class="time">${a.t}</span></div>`).join('')
+    || '<div class="sub">No alerts recorded.</div>';
+}
+function renderRegistry(){
+  document.getElementById('reg-rows').innerHTML=aircraft.map(a=>
+    `<tr><td>${a.cs}</td><td>${a.type}</td><td>${badge(a.status)}</td>
+     <td><span class="btn" onclick="delAc('${a.cs}')">Remove</span></td></tr>`).join('');
+}
+function addAircraft(){
+  const cs=document.getElementById('a-cs').value||('HAL-'+Math.floor(Math.random()*999));
+  aircraft.push({cs,type:document.getElementById('a-type').value||'Unknown',
+    lat:Math.random()*460+10,lon:Math.random()*460+10,
+    alt:+document.getElementById('a-alt').value||10000,
+    spd:+document.getElementById('a-spd').value||200,hdg:Math.random()*360,status:'ok'});
+  renderAll();
+}
+function delAc(cs){ aircraft=aircraft.filter(a=>a.cs!==cs); renderAll(); }
+function setRate(){ refreshRate=(+document.getElementById('rate').value||2)*1000;
+  clearInterval(window._sim); window._sim=setInterval(simulate,refreshRate); }
+
+// ---------- Boot ----------
+function boot(){
+  ['map','radarc','line','timeline'].forEach(id=>{const c=document.getElementById(id);if(c)c.width=c.clientWidth;});
+  tick(); setInterval(tick,1000);
+  pushAlert('warn','System initialised — telemetry link established');
+  renderAll();
+  window._sim=setInterval(simulate,refreshRate);
+  setInterval(()=>{drawRadar();},80); // smooth radar sweep
+  window.addEventListener('resize',()=>{['map','radarc','line','timeline'].forEach(id=>{const c=document.getElementById(id);if(c)c.width=c.clientWidth;});renderAll();});
+}
+</script>
+</body>
+</html>
